@@ -1,0 +1,67 @@
+\documentclass[
+	a4paper,
+	pagesize,
+	pdftex,
+	12pt,
+	%twoside, % + BCOR darunter: für doppelseitigen Druck aktivieren, sonst beide deaktivieren
+	%BCOR=5mm, % Dicke der Bindung berücksichtigen (Copyshop fragen, wie viel das ist)
+	ngerman,
+	fleqn,
+	final,
+	]{scrartcl}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc} % Eingabekodierung: UTF-8
+\usepackage{fixltx2e} % Schickere Ausgabe
+\usepackage[T1]{fontenc} % ordentliche Trennung
+\usepackage[british]{babel}
+\usepackage{lmodern} % ordentliche Schriften
+\usepackage[unicode=true]{hyperref}
+\usepackage{setspace,graphicx,tikz,tabularx} % für Elemente der Titelseite
+\usepackage[draft=false,babel,tracking=true,kerning=true,spacing=true]{microtype} % optischer Randausgleich etc.
+%\usepackage{natbib}
+\usepackage[ddmmyyyy]{datetime}
+\usepackage{amsthm}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\renewcommand{\labelitemi}{$\diamond$}
+
+\begin{document}
+
+% Beispielhafte Nutzung der Vorlage für die Titelseite (bitte anpassen):
+\input{Institutsvorlage}
+\titel{Neural Networks for Partially Ordered Trace Resolution} % Titel der Arbeit
+\typ{Bachelor Thesis} % Typ der Arbeit:  Diplomarbeit, Masterarbeit, Bachelorarbeit
+\grad{} % erreichter Akademischer Grad
+% z.B.: Master of Science (M. Sc.), Master of Education (M. Ed.), Bachelor of Science (B. Sc.), Bachelor of Arts (B. A.), Diplominformatikerin
+\autor{Glenn Dittmann} % Autor der Arbeit, mit Vor- und Nachname
+\gebdatum{13.06.1993} % Geburtsdatum des Autors
+\gebort{Berlin} % Geburtsort des Autors
+\gutachter{Prof. Dr. Matthias Weidlich}{} % Erst- und Zweitgutachter der Arbeit
+%\mitverteidigung % entfernen, falls keine Verteidigung erfolgt
+\makeTitel
+
+% Hier folgt die eigentliche Arbeit (bei doppelseitigem Druck auf einem neuen Blatt):
+\tableofcontents
+\newpage
+\section{Introduction}
+	example quotes\\
+	1: \cite{self} \\
+	2: \cite{tax2017predictive} \\
+	3: \cite{de2018aligning} \\
+	4: \cite{lu2014conformance} \\
+	5: \cite{lu2014conformanceShort}
+
+\newpage		
+\bibliographystyle{alpha}
+\bibliography{bibliography}
+
+% Erzeugen der Selbständigkeitserklärung auf einem neuen Blatt:
+\selbstaendigkeitserklaerung{\today}
+
+\end{document}

@@ -1,0 +1,35 @@
+\begin{thebibliography}{LMFvdA14}
+
+\bibitem[dLLM18]{de2018aligning}
+Massimiliano de~Leoni, Giacomo Lanciano, and Andrea Marrella.
+\newblock Aligning partially-ordered process-execution traces and models using
+  automated planning.
+\newblock In {\em Twenty-Eighth International Conference on Automated Planning
+  and Scheduling}, 2018.
+
+\bibitem[LFvdA14]{lu2014conformanceShort}
+Xixi Lu, Dirk Fahland, and Wil~MP van~der Aalst.
+\newblock Conformance checking based on partially ordered event data.
+\newblock In {\em International conference on business process management},
+  pages 75--88. Springer, 2014.
+
+\bibitem[LMFvdA14]{lu2014conformance}
+Xixi Lu, Ronny~S Mans, Dirk Fahland, and Wil~MP van~der Aalst.
+\newblock Conformance checking in healthcare based on partially ordered event
+  data.
+\newblock In {\em Proceedings of the 2014 IEEE Emerging Technology and Factory
+  Automation (ETFA)}, pages 1--8. IEEE, 2014.
+
+\bibitem[TVLRD17]{tax2017predictive}
+Niek Tax, Ilya Verenich, Marcello La~Rosa, and Marlon Dumas.
+\newblock Predictive business process monitoring with lstm neural networks.
+\newblock In {\em International Conference on Advanced Information Systems
+  Engineering}, pages 477--492. Springer, 2017.
+
+\bibitem[vdALW19]{self}
+Han van~der Aa, Henrik Leopold, and Matthias Weidlich.
+\newblock Partial order resolution of event logs for process conformance
+  checking.
+\newblock 2019.
+
+\end{thebibliography}
