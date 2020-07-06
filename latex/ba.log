@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.3.16)  25 APR 2020 17:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.3.16)  24 JUN 2020 13:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1132,7 +1132,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              on input line 47.
 Package typearea Info: Using dirty hack to recalculate internal output
 (typearea)             dimensions of LaTeX on input line 47.
-Package tocbasic Info: character protrusion at toc deactivated on input line 50
+Package tocbasic Info: character protrusion at toc deactivated on input line 52
 .
  (./ba.toc)
 \tf@toc=\write5
@@ -1142,46 +1142,42 @@ Package tocbasic Info: character protrusion at toc deactivated on input line 50
 
 
 
-] [3] (./ba.bbl) [4]
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
+]
+Underfull \hbox (badness 10000) in paragraph at lines 94--99
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 65--65
-
- []
-
-[5
+[3] [4] (./ba.bbl [5]) [6] [7
 
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 67.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 67.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 160.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 160.
  (./ba.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 67.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 67.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 160.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 160.
 Package rerunfilecheck Info: File `ba.out' has not changed.
-(rerunfilecheck)             Checksum: 9814C2D956916ADB9290ECA4E25C967A;103.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 67.
+(rerunfilecheck)             Checksum: 1244B1F719D574114856BA081A7C3BC6;4085.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 160.
  ) 
 Here is how much of TeX's memory you used:
- 27816 strings out of 492982
- 492020 string characters out of 6134896
- 678909 words of memory out of 5000000
- 30809 multiletter control sequences out of 15000+600000
- 78510 words of font info for 95 fonts, out of 8000000 for 9000
+ 27909 strings out of 492982
+ 493296 string characters out of 6134896
+ 681238 words of memory out of 5000000
+ 30843 multiletter control sequences out of 15000+600000
+ 83014 words of font info for 112 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 67i,14n,117p,8829b,754s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 67i,15n,117p,8829b,754s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/
-public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/s
-hare/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/type1/publi
-c/lm/lmss12.pfb></usr/share/texmf/fonts/type1/public/lm/lmss17.pfb></usr/share/
-texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on ba.pdf (5 pages, 142715 bytes).
+public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmcsc10.pfb></usr/
+share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/publi
+c/lm/lmri12.pfb></usr/share/texmf/fonts/type1/public/lm/lmss12.pfb></usr/share/
+texmf/fonts/type1/public/lm/lmss17.pfb></usr/share/texmf/fonts/type1/public/lm/
+lmssbx10.pfb>
+Output written on ba.pdf (7 pages, 184625 bytes).
 PDF statistics:
- 79 PDF objects out of 1000 (max. 8388607)
- 65 compressed objects within 1 object stream
- 15 named destinations out of 1000 (max. 500000)
- 27669 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 229 PDF objects out of 1000 (max. 8388607)
+ 210 compressed objects within 3 object streams
+ 41 named destinations out of 1000 (max. 500000)
+ 28373 words of extra memory for PDF output out of 29859 (max. 10000000)
 

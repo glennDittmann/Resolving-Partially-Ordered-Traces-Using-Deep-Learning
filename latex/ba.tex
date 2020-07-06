@@ -36,30 +36,123 @@
 % Beispielhafte Nutzung der Vorlage für die Titelseite (bitte anpassen):
 \input{Institutsvorlage}
 \titel{Neural Networks for Partially Ordered Trace Resolution} % Titel der Arbeit
-\typ{Bachelor Thesis} % Typ der Arbeit:  Diplomarbeit, Masterarbeit, Bachelorarbeit
-\grad{} % erreichter Akademischer Grad
+\typ{Bachelorarbeit} % Typ der Arbeit:  Diplomarbeit, Masterarbeit, Bachelorarbeit
+\grad{Bachelor of Science (B. Sc.)} % erreichter Akademischer Grad
 % z.B.: Master of Science (M. Sc.), Master of Education (M. Ed.), Bachelor of Science (B. Sc.), Bachelor of Arts (B. A.), Diplominformatikerin
 \autor{Glenn Dittmann} % Autor der Arbeit, mit Vor- und Nachname
 \gebdatum{13.06.1993} % Geburtsdatum des Autors
 \gebort{Berlin} % Geburtsort des Autors
-\gutachter{Prof. Dr. Matthias Weidlich}{} % Erst- und Zweitgutachter der Arbeit
-%\mitverteidigung % entfernen, falls keine Verteidigung erfolgt
+\gutachter{Prof. Dr. Matthias Weidlich}{Dr. Wolfgang Koessler} % Erst- und Zweitgutachter der Arbeit
+\mitverteidigung % entfernen, falls keine Verteidigung erfolgt
 \makeTitel
+
+%abstract
 
 % Hier folgt die eigentliche Arbeit (bei doppelseitigem Druck auf einem neuen Blatt):
 \tableofcontents
 \newpage
-\section{Introduction}
-	example quotes\\
-	1: \cite{self} \\
-	2: \cite{tax2017predictive} \\
-	3: \cite{de2018aligning} \\
-	4: \cite{lu2014conformance} \\
-	5: \cite{lu2014conformanceShort}
 
-\newpage		
+\textsf{Purpose and scope of your entire report.} The purpose of your entire report is to make a 
+\textbf{scientific argument using the scientific method}.A scientific argument always has the following steps that all must come in this order.
+
+\begin{itemize}
+	\item[SM1] \textbf{Explicate the assumptions and state of the art} on which you are going to conduct your research to investigate your research problem / test the hypothesis.
+	\item[SM2] Clearly and precisely \textbf{formulate a research problem or hypothesis}.
+	\item[SM3] \textbf{Describe the (research) method} that you followed to investigate the problem / to test the hypothesis in a way that \textbf{allows someone else to reproduce your steps}. The method must include steps and criteria for evaluating whether you answered your question successfully or not.
+	\item[SM4] \textbf{Provide execution details} on how you followed the method in the given, specific situation.
+	\item[SM5] \textbf{Report your results} by describing and summarizing your measurements. You must not interpret your results.
+	\item[SM6] \textbf{Now interpret your results} by contextualizing your measurements and drawing conclusion that lead to answering your research problem or defining further follow-up research problems.
+	
+\end{itemize}
+
+%%% ===============================================================================
+\section{Introduction}\label{sec:introduction}
+%%% ===============================================================================
+	\textsf{Purpose and scope of Section \ref{sec:introduction}}. The introduction is a summary of your work and your scientific argument that shall be understandable to anyone in your scientific field, e.g., anyone in Data Science. A reader must be able to comprehend the problem, method, relevant execution details, results, and their interpretation by reading the introduction and the introduction alone.
+	Section~\ref{sec:introduction::topic} introduces the general topic of your research
+	Section~\ref{sec:introduction::state-of-art} discusses the state of the art and identifies a research.
+	Section~\ref{sec:introduction::research-question} then states the research problem to investigate.
+	Section~\ref{sec:introduction::method} explains the research method that was followed, possibly with execution details.
+	Section~\ref{sec:introduction::results} then presents the results and their interpretation. Only if a reader thinks they are not convinced or they need more details to reproduce your study, they shall have to read further. The individual chapters and sections provide the details for each of the steps in your scientific argument.
+	
+	You usually write the introduction chapter \emph{after} you wrote all other chapters, but you should keep on making notes for each of the subsections as you write the later chapters.
+	
+	\subsection{Context and Topic (SM1)}\label{sec:introduction::topic}
+	
+	\subsection{State of the Art (SM1)}\label{sec:introduction::state-of-art}
+	
+	\subsection{Research Question (SM2)}\label{sec:introduction::research-question}
+	
+	\subsection{Method or Approach (SM3, SM4)}\label{sec:introduction::method}
+	
+	\subsection{Findings (SM5, SM6)}\label{sec:introduction::results}
+
+%%% ===============================================================================
+\section{Background}
+%%% ===============================================================================
+	\subsection{Preliminaries}
+		Process Mining -> Conformance Checking \\
+		Log, Trace, Event, Certain Trace, Uncertain Trace \\
+		Event-Name, Event-Alias, Event-Properties \\
+		Neural Network \\
+		Partial Order, Total Order \\ 
+	\subsection{Related Work}
+	\cite{de2018aligning}
+	\cite{lu2014conformance}
+	\cite{lu2014conformanceShort}
+	\cite{self}
+	\cite{tax2017predictive}
+%%% ===============================================================================
+\section{Problem Exposition (optional)}
+%%% ===============================================================================
+	
+	\subsection{Context / Business Understanding (SM1)}
+	
+	\subsection{Data Understanding (SM1)}
+	
+	\subsection{Detailed Research Questions (SM2)}
+	
+	\subsection{Detailed Method (SM3)}
+
+%%% ===============================================================================
+\section{First Real Chapter addressing first Research Problem}
+%%% ===============================================================================
+
+	\subsection{First Sub-Problem}
+	
+	\subsection{Second Sub-Problem}
+
+%%% ===============================================================================
+\section{Second Real Chapter}
+%%% ===============================================================================
+
+%%% ===============================================================================
+\section{Evaluation}
+%%% ===============================================================================
+
+	\subsection{Objective (SM2)}
+	
+	\subsection{Setup (SM3)}
+	
+	\subsection{Execution (SM4)}
+	
+	\subsection{Results (SM5)}
+	
+	\subsection{Discussion (SM6)}
+
+%%% ===============================================================================
+\section{Conclusion}
+%%% ===============================================================================
+		Your conclusions are not just a factual summary of your work, but they position, interpret and defend your findings against the state of the art that you discussed in Sect.~\ref{sec:introduction::state-of-art}. You specifically outline which concrete findings or methodological contributions advance our knowledge towards the general objective you introduced in Sect.~\ref{sec:introduction::topic}. Objectively discuss which parts you solved and in which parts you failed. \\
+		You should explicitly discuss limitations and shortcomings of your work and detail what kind of future studies are needed to overcome these limitations. Be specific in the sense that your arguments for future work should be based on concrete findings and insights you obtained in your report.
+
+%%% ===============================================================================
+%%% Bibliography
+%%% ===============================================================================		
 \bibliographystyle{alpha}
 \bibliography{bibliography}
+
+
 
 % Erzeugen der Selbständigkeitserklärung auf einem neuen Blatt:
 \selbstaendigkeitserklaerung{\today}
