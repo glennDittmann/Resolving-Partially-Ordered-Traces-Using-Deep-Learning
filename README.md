@@ -12,4 +12,3 @@ The main problem adressed in my work is to solve the problem of *Uncertain Trace
 ### Author
 Glenn Dittmann
 aiming for a Bachelor of Science in (Computer Science | Biology) at Humboldt Universität zu Berlin
-
