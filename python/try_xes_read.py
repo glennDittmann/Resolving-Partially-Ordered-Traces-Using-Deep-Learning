@@ -121,12 +121,8 @@ for key in range(0,1):
 
 
 
-#TODO explore log data structure to acces events and times correspondingly
-#data structure???
-#print_cases(uncertain_log, 2)
-
-#TODO extract from the uncertain traces the subtraces that we want to learn the correct order for
-# e.g.: [A,B,C,D] where B and C are uncertain we want to know if B,C or C,B is more likely, learning it from the certain traces.
+# extract the uncertain set from the uncertain traces 
+# e.g.: [A,B,C,D] where B and C are uncertain, so {A}{B,C}{D} we want to know if B,C or C,B is more likely, learning it from the certain traces.
 uncertain_sequences = set()
 for i in range(0, len(uncertain_log)):
     j = 0
