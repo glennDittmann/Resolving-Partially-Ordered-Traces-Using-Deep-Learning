@@ -8,6 +8,7 @@ from pm4py.algo.filtering.log.timestamp import timestamp_filter
 import xml.etree.ElementTree as et
 from pprint import pprint
 
+
 #prints a certain trace, given by number
 def print_case(log, num):
     case = log[num]
@@ -17,6 +18,7 @@ def print_case(log, num):
         b = "event activity: " + str(event["concept:name"])
         c = "time: " + str(event["time:timestamp"])
         print('{:20s}{:60s}{:20s}'.format(a,b,c))
+
 
 #prints all cases up to the given number
 def print_cases(log, num_traces):
@@ -34,6 +36,7 @@ def print_cases(log, num_traces):
     print()
 
 
+#checks if a case is certain, gets called by split traces
 def case_is_certain(case_time_list):
     for i in range(0, len(case_time_list)-1):
         if case_time_list[i] == case_time_list[i+1]:
@@ -41,6 +44,7 @@ def case_is_certain(case_time_list):
     return True
 
 
+#splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
 def split_traces(log):
     certain_traces = list()
     uncertain_traces = list()
@@ -55,6 +59,7 @@ def split_traces(log):
     return certain_traces, uncertain_traces
 
 
+#returns the average trace length for a log
 def avg_trace_length(log):
     avg = 0
     for case in log:
@@ -62,6 +67,7 @@ def avg_trace_length(log):
     return round(avg / len(log),2)
 
 
+#returns the length of the longest trace in a log
 def max_trace_length(log):
     max = 0
     for case in log:
@@ -70,6 +76,7 @@ def max_trace_length(log):
     return max
 
 
+#returns a list of dicts, for each trace, the keys for a trace are timestamps holding all events occuring at that time for a specific trace
 def make_trace_sets(log):
     trace_as_sets = []
     for i in range(0, len(log)):
@@ -81,11 +88,46 @@ def make_trace_sets(log):
             else:
                 trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
             j += 1
+        for key in trace:
+            trace[key].sort()
         trace_as_sets.append(trace)
     return trace_as_sets
 
 
-# set logs to easily acces them below
+#gets the occuring uncertain sequences in the log as a set datastructure 
+def get_uncertain_sequences(uncertain_log):
+    uncertain_sequences = set()
+    for i in range(0, len(uncertain_log)):
+        j = 0
+        while j < len(uncertain_log[i])-1:
+            sequence = list()
+            if uncertain_log[i][j]["time:timestamp"] == uncertain_log[i][j+1]["time:timestamp"]:
+                time = uncertain_log[i][j]["time:timestamp"] 
+                while j < len(uncertain_log[i]) and time == uncertain_log[i][j]["time:timestamp"]:
+                    sequence.append(uncertain_log[i][j]["concept:name"])
+                    j += 1
+            else:
+                j += 1    
+            if sequence:
+                uncertain_sequences.add(tuple(sorted(sequence)))
+    return uncertain_sequences
+
+
+#gets for the occuring uncertain sequences the amount of times they come up in the log, as a dict data structure
+def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
+    num_uncertain_sequences = dict()
+    for trace in uncertain_trace_as_sets:
+        for key in trace:
+            if len(trace[key]) > 1:
+                if tuple(trace[key]) not in num_uncertain_sequences:
+                    num_uncertain_sequences[tuple(trace[key])] = 1
+                else:
+                    num_uncertain_sequences[tuple(trace[key])] += 1
+
+    return num_uncertain_sequences
+
+
+# set log path' as variables
 SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
 PERMIT        = "PermitLog.xes"                 #contains   7065 traces  #number of unique events = 51    13% uncertain
 BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number of unique events = 24    38% uncertain
@@ -93,7 +135,7 @@ BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
 log = xes_import_factory.apply(SEPSIS)
-#resources = attributes_filter.get_attribute_values(log, "org:resource")
+
 activities = attributes_filter.get_attribute_values(log, "concept:name")
 
 print('Load log with %s traces.\n' %len(log))
@@ -145,39 +187,22 @@ for key in range(0,1):
     print(uncertain_traces_events[key], "\n")
 
 
-
-# extract the uncertain set from the uncertain traces 
-# e.g.: [A,B,C,D] where B and C are uncertain, so {A}{B,C}{D} we want to know if B,C or C,B is more likely, learning it from the certain traces.
-uncertain_sequences = set()
-for i in range(0, len(uncertain_log)):
-    j = 0
-    while j < len(uncertain_log[i])-1:
-        sequence = list()
-        if uncertain_log[i][j]["time:timestamp"] == uncertain_log[i][j+1]["time:timestamp"]:
-            time = uncertain_log[i][j]["time:timestamp"] 
-            while j < len(uncertain_log[i]) and time == uncertain_log[i][j]["time:timestamp"]:
-                sequence.append(uncertain_log[i][j]["concept:name"])
-                j += 1
-        else:
-            j += 1    
-        if sequence:
-            uncertain_sequences.add(tuple(sorted(sequence)))
-
+uncertain_sequences = get_uncertain_sequences(uncertain_log)
 print("Uncertain Sets in the log are:")
-pprint(uncertain_sequences)
+#pprint(uncertain_sequences)
 print()
 
 #get the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
 certain_traces_as_sets = make_trace_sets(certain_log)
 uncertain_traces_as_sets = make_trace_sets(uncertain_log)
 
-pprint(uncertain_traces_as_sets[0])
-#print()
-#print_case(uncertain_log, 0)
+pprint(uncertain_traces_as_sets[444])
+print_case(uncertain_log, 444)
 
-#TODO: make a function that counts the amount of each uncertain sequence, appearing in the log
-def num_uncertain_sequences(uncertain_log):
-    pass
+num_uncertain_sequences = num_uncertain_sequences(uncertain_traces_as_sets, uncertain_sequences)
+print()
+pprint(num_uncertain_sequences)
+
 
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)

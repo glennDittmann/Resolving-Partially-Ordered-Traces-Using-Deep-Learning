@@ -8,6 +8,6 @@ scripts for
 
 Log files are too large, so they nees to be saved and processed locally.
 
-A collection of Real life Event Logs can be found [here](https://data.4tu.nl/repository/collection:event_logs_real)
+A collection of Real life Event Logs can be found [here](https://data.4tu.nl/repository/collection:event_logs_real).
 
 Be aware that some of the files need to be added to the python scripts manually.
