@@ -1,12 +1,25 @@
 #in BPI_2012 5006 (38.3%) of the traces are uncertain       ---> assume the order in the log = correct order
 #in BPI_2014 41353 (97.2%) of the traces are uncertain      ---> derive correct order from incident_acitivity_number data attribute
 #in TRAFFIC_FINES 9166 (6.1%) of the traces are uncertain   ---> 
-
 from pm4py.objects.log.importer.xes import factory as xes_import_factory
+from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.algo.filtering.log.timestamp import timestamp_filter
 import xml.etree.ElementTree as et
 from pprint import pprint
+
+#prints the specified trace of a log(certain or uncertain)
+def better_print_trace_infos(log, num_trace, kind):
+    if kind == "c":
+        name = "Certain Trace"
+    elif kind == "u":
+        name = "Uncertain Trace" 
+    print(name, num_trace, "has length ", len(log[num_trace]))
+    log_trace_events = []
+    for event in log[num_trace]:
+        log_trace_events.append(event["concept:name"])
+    print("And its events are:")
+    print(log_trace_events, "\n")
 
 
 #prints a certain trace, given by number
@@ -134,16 +147,15 @@ BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number
 BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number of unique events = 9     93% uncertain
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
-log = xes_import_factory.apply(SEPSIS)
+#log = xes_import_factory.import_log(SEPSIS)
+log = xes_importer.apply(SEPSIS)
 
 activities = attributes_filter.get_attribute_values(log, "concept:name")
-
+print("--------------------------------------------------------------- \n")
 print('Load log with %s traces.\n' %len(log))
 print("Number of unique events = ", len(activities))
 all_events = list(activities.keys())
-print("which are:", all_events, "\n")
-
-print()
+print("Which are: \n", all_events, "\n")
 
 certain_log, uncertain_log = split_traces(log)
 NUM_TRACES = len(certain_log)+len(uncertain_log)
@@ -157,51 +169,18 @@ print("Max trace length:", max_trace_length(uncertain_log))
 print("Fraction of uncertain traces: ", round(len(uncertain_log)/NUM_TRACES*100,2), "% \n")
 
 
-#extract case id and event name from both certain and uncertain traces lists
-# e.g.: traces = {0: [A,B,C,D], 1: [A,D], ... }
-certain_traces_events = dict()
-certain_traces_times = dict() 
-for case_index, case in enumerate(certain_log):
-    certain_traces_events[case_index] = list()
-    certain_traces_times[case_index] = list()
-    for event_index, event in enumerate(case):
-        certain_traces_events[case_index].append(str(event["concept:name"]))
-        certain_traces_times[case_index].append(event["time:timestamp"])
-
-for key in range(0,1):
-    print("Certain trace", key, "has length ", len(certain_traces_events[key]))
-    print(certain_traces_events[key], "\n")
-
-
-uncertain_traces_events = dict()                        #contains the uncertain traces 
-uncertain_traces_times = dict()                         #contains the corresponding timestamps 
-for case_index, case in enumerate(uncertain_log):
-    uncertain_traces_events[case_index] = list()
-    uncertain_traces_times[case_index] = list()
-    for event_index, event in enumerate(case):
-        uncertain_traces_events[case_index].append(str(event["concept:name"]))
-        uncertain_traces_times[case_index].append(event["time:timestamp"])
-
-for key in range(0,1):
-    print("Uncertain trace", key, "has length ", len(uncertain_traces_events[key]))
-    print(uncertain_traces_events[key], "\n")
-
-
 uncertain_sequences = get_uncertain_sequences(uncertain_log)
 print("Uncertain Sets in the log are:")
 #pprint(uncertain_sequences)
-print()
-
 #get the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
 certain_traces_as_sets = make_trace_sets(certain_log)
 uncertain_traces_as_sets = make_trace_sets(uncertain_log)
-
-pprint(uncertain_traces_as_sets[444])
-print_case(uncertain_log, 444)
-
 num_uncertain_sequences = num_uncertain_sequences(uncertain_traces_as_sets, uncertain_sequences)
-print()
+
 pprint(num_uncertain_sequences)
+print()
+#pprint(uncertain_traces_as_sets[123])
+#print_case(uncertain_log, 123)
 
 
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
