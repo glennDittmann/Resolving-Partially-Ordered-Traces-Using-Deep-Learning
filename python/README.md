@@ -1,8 +1,8 @@
 # Folder for Python Code
 
 scripts for 
-> processing event logs
-> using neural networks for partial order resolution
+- processing event logs
+- using neural networks for partial order resolution
 
 ### Log files
 
