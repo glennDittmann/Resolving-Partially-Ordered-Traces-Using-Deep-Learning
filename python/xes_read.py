@@ -8,12 +8,21 @@ from pm4py.algo.filtering.log.timestamp import timestamp_filter
 import xml.etree.ElementTree as et
 from pprint import pprint
 
+
+def print_case(log, num):
+    case = log[num]
+    print("\n case id: %s" % (case.attributes["concept:name"]))
+    for event_index, event in enumerate(case):
+        a = "event index: " + str(event_index)
+        b = "event activity: " + str(event["concept:name"])
+        c = "time: " + str(event["time:timestamp"])
+        print('{:20s}{:60s}{:20s}'.format(a,b,c))
+
 def print_cases(log, num_traces):
     count = 0
     for case_index, case in enumerate(log):
         print("\n case index: %d  case id: %s" % (case_index, case.attributes["concept:name"]))
         for event_index, event in enumerate(case):
-            #print("event index: %d  event activity: %s %70s" % (event_index, event["concept:name"], "time: " + str(event["time:timestamp"])))
             a = "event index: " + str(event_index)
             b = "event activity: " + str(event["concept:name"])
             c = "time: " + str(event["time:timestamp"])
@@ -140,9 +149,31 @@ for i in range(0, len(uncertain_log)):
 
 print("Uncertain Sets in the log are:")
 pprint(uncertain_sequences)
+print()
 
+#TODO: write a function that gets the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
+def make_trace_sets(log):
+    trace_as_sets = []
+    for i in range(0, len(log)):
+        j = 0
+        trace = dict()
+        while j < len(log[i]):
+            if str(log[i][j]["time:timestamp"]) in trace:
+                trace[str(log[i][j]["time:timestamp"])].append(log[i][j]["concept:name"])
+            else:
+                trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
+            j += 1
+        trace_as_sets.append(trace)
+    return trace_as_sets
 
-#TODO create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
+certain_traces_as_sets = make_trace_sets(certain_log)
+uncertain_traces_as_sets = make_trace_sets(uncertain_log)
+#pprint(certain_traces_as_sets)
+
+pprint(uncertain_traces_as_sets[1005])
+print()
+print_case(uncertain_log, 1005)
+#TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
 
-#TODO think of how to map event names / datetime.datetime as NN input and what would the output be
+#TODO: think of how to map event names / datetime.datetime as NN input and what would the output be
