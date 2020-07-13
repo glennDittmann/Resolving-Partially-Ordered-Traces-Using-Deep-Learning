@@ -8,7 +8,7 @@ from pm4py.algo.filtering.log.timestamp import timestamp_filter
 import xml.etree.ElementTree as et
 from pprint import pprint
 
-
+#prints a certain trace, given by number
 def print_case(log, num):
     case = log[num]
     print("\n case id: %s" % (case.attributes["concept:name"]))
@@ -18,6 +18,7 @@ def print_case(log, num):
         c = "time: " + str(event["time:timestamp"])
         print('{:20s}{:60s}{:20s}'.format(a,b,c))
 
+#prints all cases up to the given number
 def print_cases(log, num_traces):
     count = 0
     for case_index, case in enumerate(log):
@@ -43,9 +44,9 @@ def case_is_certain(case_time_list):
 def split_traces(log):
     certain_traces = list()
     uncertain_traces = list()
-    for case_index, case in enumerate(log):
+    for case in log:
         times = list()
-        for event_index, event in enumerate(case):
+        for event in case:
             times.append(event["time:timestamp"])
         if case_is_certain(times):
             certain_traces.append(case)
@@ -69,6 +70,21 @@ def max_trace_length(log):
     return max
 
 
+def make_trace_sets(log):
+    trace_as_sets = []
+    for i in range(0, len(log)):
+        j = 0
+        trace = dict()
+        while j < len(log[i]):
+            if str(log[i][j]["time:timestamp"]) in trace:
+                trace[str(log[i][j]["time:timestamp"])].append(log[i][j]["concept:name"])
+            else:
+                trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
+            j += 1
+        trace_as_sets.append(trace)
+    return trace_as_sets
+
+
 # set logs to easily acces them below
 SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
 PERMIT        = "PermitLog.xes"                 #contains   7065 traces  #number of unique events = 51    13% uncertain
@@ -81,9 +97,9 @@ log = xes_import_factory.apply(SEPSIS)
 activities = attributes_filter.get_attribute_values(log, "concept:name")
 
 print('Load log with %s traces.\n' %len(log))
-print("Number of events = ", len(activities), "\n")
+print("Number of unique events = ", len(activities))
 all_events = list(activities.keys())
-print("All events in the log = ", all_events, "\n")
+print("which are:", all_events, "\n")
 
 print()
 
@@ -151,28 +167,18 @@ print("Uncertain Sets in the log are:")
 pprint(uncertain_sequences)
 print()
 
-#TODO: write a function that gets the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
-def make_trace_sets(log):
-    trace_as_sets = []
-    for i in range(0, len(log)):
-        j = 0
-        trace = dict()
-        while j < len(log[i]):
-            if str(log[i][j]["time:timestamp"]) in trace:
-                trace[str(log[i][j]["time:timestamp"])].append(log[i][j]["concept:name"])
-            else:
-                trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
-            j += 1
-        trace_as_sets.append(trace)
-    return trace_as_sets
-
+#get the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
 certain_traces_as_sets = make_trace_sets(certain_log)
 uncertain_traces_as_sets = make_trace_sets(uncertain_log)
-#pprint(certain_traces_as_sets)
 
-pprint(uncertain_traces_as_sets[1005])
-print()
-print_case(uncertain_log, 1005)
+pprint(uncertain_traces_as_sets[0])
+#print()
+#print_case(uncertain_log, 0)
+
+#TODO: make a function that counts the amount of each uncertain sequence, appearing in the log
+def num_uncertain_sequences(uncertain_log):
+    pass
+
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
 
