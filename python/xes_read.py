@@ -9,6 +9,9 @@ import xml.etree.ElementTree as et
 from pprint import pprint
 import pandas as pd
 import matplotlib.pyplot as plt 
+import matplotlib
+matplotlib.rc('xtick', labelsize=8)
+import numpy as np
 
 #prints the specified trace of a log(certain or uncertain)
 def better_print_trace_infos(log, num_trace, kind):
@@ -213,24 +216,43 @@ print()
 #pprint(uncertain_traces_as_sets[123])
 #print_case(uncertain_log, 123)
 
-#TODO: visualize data of log
-color_log, color_certain, color_uncertain = 'tab:blue', 'tab:green', 'tab:orange'
+#visualize data of log
+color_log, color_certain, color_uncertain = 'tab:blue', 'darkseagreen', 'sandybrown'
 #visualize basic log information
+
 fig, ax = plt.subplots(1,2)
+#certain and uncertain log length as pie chart
+def func(pct, allvals):
+    absolute = int(pct/100.*np.sum(allvals))
+    return "{:.1f}%\n({:d} Traces)".format(pct, absolute)
 
-X0 = ['Log', 'Certain Log', 'Uncertain Log']
-y0 = [len(log), len(certain_log), len(uncertain_log)]
-r1 = ax[0].bar(X0,y0, color=[color_log, color_certain, color_uncertain])
-ax[0].set_title('Basic Log Information')
-ax[0].set_xlabel('Log Types')
-ax[0].set_ylabel('Number of Traces')
+labels = ['Certain Part', 'Uncertain Part']
+sizes = [len(certain_log)/NUM_TRACES*100, len(uncertain_log)/NUM_TRACES*100]
+wedges, texts, autotexts = ax[0].pie(sizes, startangle=90, colors = [color_certain, color_uncertain], 
+                                        
+                                        autopct=lambda pct: func(pct, [len(certain_log), len(uncertain_log)]), textprops=dict(color="k"))
+ax[0].set_title('Traces of the Log that are Certain, Uncertain Respectively')
 
+#measures for trace length
 X1 = ['avg', 'min', 'max', 'c_avg', 'c_min', 'c_max', 'u_avg', 'u_min', 'u_max'] 
 y1 = [log_avg, log_min, log_max, certain_avg, certain_min, certain_max, uncertain_avg, uncertain_min, uncertain_max]
 r2 = ax[1].bar(X1, y1, color=[color_log, color_log, color_log, color_certain, color_certain, color_certain, color_uncertain, color_uncertain, color_uncertain])
-ax[1].set_title('Log Measures')
-ax[1].set_xlabel('Averag and Maximum (Trace length) ')
+ax[1].set_title('Trace Length Measures in the whole, certain and uncertain Log')
 ax[1].set_ylabel('Number of Events')
+
+#frequency of each even in the log
+fig1, ax1 = plt.subplots(3,1)
+ax1[0].bar(range(len(frequency_of_events_log)), frequency_of_events_log.values(), align='center')
+ax1[0].set_title('Log')
+ax1[0].set_ylabel('Amount of Occurance')
+ax1[1].bar(range(len(frequency_of_events_certain)), frequency_of_events_certain.values(), align='center')
+ax1[1].set_title('Certain Log')
+ax1[1].set_ylabel('Amount of Occurance')
+ax1[2].bar(range(len(frequency_of_events_uncertain)), frequency_of_events_uncertain.values(), align='center')
+ax1[2].set_title('Uncertain Log')
+ax1[2].set_ylabel('Amount of Occurance')
+fig1.suptitle('Frequency of Events in the whole, certain and uncertain log', fontsize=20)
+plt.setp(ax1, xticks=[i for i in range(len(all_events))], xticklabels = list(frequency_of_events_log.keys()))
 
 # visualize uncertain trace frequency
 X = list()
@@ -255,5 +277,9 @@ plt.show()
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
 
 #TODO: think of how to map event names / datetime.datetime as NN input and what would the output be
-
-#test the frequency funtion by adding up 1 for each event in each trace and comparing this to the sum of frequncy_of_events(log, certain, uncertain)
+#TODO:
+        #make the second chart align avg, min and max bars
+        #make a color legend for the first figure
+        #set colors for frequency of events 
+        #set colormap for higher values for frequency of events and frequency of uncertain sets
+        #write numbers over the bars 
