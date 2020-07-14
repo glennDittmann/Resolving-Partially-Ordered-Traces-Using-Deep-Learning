@@ -7,6 +7,8 @@ from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.algo.filtering.log.timestamp import timestamp_filter
 import xml.etree.ElementTree as et
 from pprint import pprint
+import pandas as pd
+import matplotlib.pyplot as plt 
 
 #prints the specified trace of a log(certain or uncertain)
 def better_print_trace_infos(log, num_trace, kind):
@@ -80,6 +82,14 @@ def avg_trace_length(log):
     return round(avg / len(log),2)
 
 
+#returns the length of the shortest trace in a log
+def min_trace_length(log):
+    min = 10000
+    for case in log:
+        if len(case) < min:
+            min = len(case)
+    return min
+
 #returns the length of the longest trace in a log
 def max_trace_length(log):
     max = 0
@@ -140,6 +150,16 @@ def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
     return num_uncertain_sequences
 
 
+def frequency_of_events(all_events, log):
+    frequency_of_events = dict()
+    for event in all_events:
+        frequency_of_events[event] = 0
+    for case in log:
+        for event in case:
+            frequency_of_events[event["concept:name"]] += 1
+
+    return frequency_of_events
+
 # set log path' as variables
 SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
 PERMIT        = "PermitLog.xes"                 #contains   7065 traces  #number of unique events = 51    13% uncertain
@@ -147,43 +167,93 @@ BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number
 BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number of unique events = 9     93% uncertain
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
-#log = xes_import_factory.import_log(SEPSIS)
 log = xes_importer.apply(SEPSIS)
 
 activities = attributes_filter.get_attribute_values(log, "concept:name")
-print("--------------------------------------------------------------- \n")
-print('Load log with %s traces.\n' %len(log))
-print("Number of unique events = ", len(activities))
+print("------------------------------------------------------------------------------------------------------------------- \n")
+
 all_events = list(activities.keys())
-print("Which are: \n", all_events, "\n")
-
+NUM_TRACES = len(log)
 certain_log, uncertain_log = split_traces(log)
-NUM_TRACES = len(certain_log)+len(uncertain_log)
-print("Number of certain traces: ", len(certain_log))
-print("Avg trace length:", avg_trace_length(certain_log))
-print("Max trace length:", max_trace_length(certain_log))
-print()
-print("Number of uncertain traces: ", len(uncertain_log))
-print("Avg trace length:", avg_trace_length(uncertain_log))
-print("Max trace length:", max_trace_length(uncertain_log))
-print("Fraction of uncertain traces: ", round(len(uncertain_log)/NUM_TRACES*100,2), "% \n")
 
+frequency_of_events_log = frequency_of_events(all_events, log)
+frequency_of_events_certain = frequency_of_events(all_events, certain_log)
+frequency_of_events_uncertain = frequency_of_events(all_events, uncertain_log)
+
+log_avg, log_min, log_max = avg_trace_length(log), min_trace_length(log), max_trace_length(log)
+certain_avg, certain_min, certain_max = avg_trace_length(certain_log), min_trace_length(certain_log), max_trace_length(certain_log)
+uncertain_avg, uncertain_min, uncertain_max = avg_trace_length(uncertain_log), min_trace_length(uncertain_log), max_trace_length(uncertain_log)
 
 uncertain_sequences = get_uncertain_sequences(uncertain_log)
-print("Uncertain Sets in the log are:")
-#pprint(uncertain_sequences)
-#get the uncertain / certain traces in sets of events with the same timestamps as in the papers definiton of traces
 certain_traces_as_sets = make_trace_sets(certain_log)
 uncertain_traces_as_sets = make_trace_sets(uncertain_log)
 num_uncertain_sequences = num_uncertain_sequences(uncertain_traces_as_sets, uncertain_sequences)
 
+print("Number of traces: ", len(log))
+print("Avg trace length:", log_avg)
+print("Min trace length:", log_min)
+print("Max trace length:", log_max)
+print()
+print("Number of certain traces: ", len(certain_log))
+print("Avg trace length:", certain_avg)
+print("Min trace length:", certain_min)
+print("Max trace length:", certain_max)
+print()
+print("Number of uncertain traces: ", len(uncertain_log))
+print("Avg trace length:", uncertain_avg)
+print("Min trace length:", uncertain_min)
+print("Max trace length:", uncertain_max)
+print("Fraction of uncertain traces: ", round(len(uncertain_log)/NUM_TRACES*100,2), "% \n")
+print("Number of unique events = ", len(activities))
+print("Which are: \n", all_events, "\n")
+
+print("Uncertain Sets in the log are (with", len(num_uncertain_sequences),"kinds of uncertain sets):")
 pprint(num_uncertain_sequences)
 print()
 #pprint(uncertain_traces_as_sets[123])
 #print_case(uncertain_log, 123)
 
+#TODO: visualize data of log
+color_log, color_certain, color_uncertain = 'tab:blue', 'tab:green', 'tab:orange'
+#visualize basic log information
+fig, ax = plt.subplots(1,2)
+
+X0 = ['Log', 'Certain Log', 'Uncertain Log']
+y0 = [len(log), len(certain_log), len(uncertain_log)]
+r1 = ax[0].bar(X0,y0, color=[color_log, color_certain, color_uncertain])
+ax[0].set_title('Basic Log Information')
+ax[0].set_xlabel('Log Types')
+ax[0].set_ylabel('Number of Traces')
+
+X1 = ['avg', 'min', 'max', 'c_avg', 'c_min', 'c_max', 'u_avg', 'u_min', 'u_max'] 
+y1 = [log_avg, log_min, log_max, certain_avg, certain_min, certain_max, uncertain_avg, uncertain_min, uncertain_max]
+r2 = ax[1].bar(X1, y1, color=[color_log, color_log, color_log, color_certain, color_certain, color_certain, color_uncertain, color_uncertain, color_uncertain])
+ax[1].set_title('Log Measures')
+ax[1].set_xlabel('Averag and Maximum (Trace length) ')
+ax[1].set_ylabel('Number of Events')
+
+# visualize uncertain trace frequency
+X = list()
+y = list()
+for key in num_uncertain_sequences:
+    s = ''
+    for event in key:
+        s += event[:2]
+    X.append(s)
+    y.append(num_uncertain_sequences[key])
+
+fig2, ax2 = plt.subplots()    
+ax2.bar(X,y)
+ax2.set_title('Uncertain Trace Frequency')
+ax2.set_xlabel('Uncertain Trace Set')
+ax2.set_ylabel('Frequency in the Log')
+
+
+plt.show()
 
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
 
 #TODO: think of how to map event names / datetime.datetime as NN input and what would the output be
+
+#test the frequency funtion by adding up 1 for each event in each trace and comparing this to the sum of frequncy_of_events(log, certain, uncertain)
