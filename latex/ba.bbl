@@ -1,11 +1,32 @@
 \begin{thebibliography}{LMFvdA14}
 
+\bibitem[Aal16]{AalstWilvander2016Pm:d}
+Wil van~der Aalst.
+\newblock Process mining : data science in action / by wil van der aalst, 2016.
+
+\bibitem[CvDSW18]{carmona2018conformance}
+Josep Carmona, Boudewijn van Dongen, Andreas Solti, and Matthias Weidlich.
+\newblock {\em Conformance Checking}.
+\newblock Springer, 2018.
+
 \bibitem[dLLM18]{de2018aligning}
 Massimiliano de~Leoni, Giacomo Lanciano, and Andrea Marrella.
 \newblock Aligning partially-ordered process-execution traces and models using
   automated planning.
 \newblock In {\em Twenty-Eighth International Conference on Automated Planning
   and Scheduling}, 2018.
+
+\bibitem[GBC16]{Goodfellow-et-al-2016}
+Ian Goodfellow, Yoshua Bengio, and Aaron Courville.
+\newblock {\em Deep Learning}.
+\newblock MIT Press, 2016.
+\newblock \url{http://www.deeplearningbook.org}.
+
+\bibitem[G{\'e}r19]{geron2019hands}
+Aur{\'e}lien G{\'e}ron.
+\newblock {\em Hands-on machine learning with Scikit-Learn, Keras, and
+  TensorFlow: Concepts, tools, and techniques to build intelligent systems}.
+\newblock O'Reilly Media, 2019.
 
 \bibitem[LFvdA14]{lu2014conformanceShort}
 Xixi Lu, Dirk Fahland, and Wil~MP van~der Aalst.
