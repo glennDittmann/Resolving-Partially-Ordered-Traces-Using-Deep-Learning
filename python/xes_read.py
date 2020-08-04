@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.rc('xtick', labelsize=8)
 import numpy as np
+from pathlib import Path
 
 #prints the specified trace of a log(certain or uncertain)
 def better_print_trace_infos(log, num_trace, kind):
@@ -170,7 +171,10 @@ BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number
 BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number of unique events = 9     93% uncertain
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
-log = xes_importer.apply(SEPSIS)
+path_to_logs = Path('../bachelor_thesis/python/logs').resolve()
+#print("Logs at: ", path_to_logs)
+
+log = xes_importer.apply(str(path_to_logs) + '/' + SEPSIS)
 
 activities = attributes_filter.get_attribute_values(log, "concept:name")
 print("------------------------------------------------------------------------------------------------------------------- \n")
@@ -266,7 +270,7 @@ for key in num_uncertain_sequences:
 
 fig2, ax2 = plt.subplots()    
 ax2.bar(X,y)
-ax2.set_title('Uncertain Trace Frequency')
+ax2.set_title('Uncertain Set Frequency')
 ax2.set_xlabel('Uncertain Trace Set')
 ax2.set_ylabel('Frequency in the Log')
 
@@ -277,6 +281,7 @@ plt.show()
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
 
 #TODO: think of how to map event names / datetime.datetime as NN input and what would the output be
+
 #TODO:
         #make the second chart align avg, min and max bars
         #make a color legend for the first figure
