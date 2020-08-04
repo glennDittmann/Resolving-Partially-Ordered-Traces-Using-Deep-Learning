@@ -14,6 +14,19 @@ matplotlib.rc('xtick', labelsize=8)
 import numpy as np
 from pathlib import Path
 
+#loads log from a given .xes file, specified with the filename (file must lay on same level as function calling script)
+def load_log(filename):
+    path_to_logs = Path('../python/logs').resolve()
+    log = xes_importer.apply(str(path_to_logs) + '/' + filename)
+    return log
+
+#gets a list of the unique events as strings, sorted alphabetically
+def get_events_sorted(log):
+    activities = attributes_filter.get_attribute_values(log, "concept:name")
+    all_events = list(activities.keys())
+    all_events.sort()
+    return all_events
+
 #prints the specified trace of a log(certain or uncertain)
 def better_print_trace_infos(log, num_trace, kind):
     if kind == "c":
@@ -64,7 +77,7 @@ def case_is_certain(case_time_list):
 
 
 #splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
-def split_traces(log):
+def split_log(log):
     certain_traces = list()
     uncertain_traces = list()
     for case in log:
@@ -164,24 +177,17 @@ def frequency_of_events(all_events, log):
 
     return frequency_of_events
 
-# set log path' as variables
+""" # set log path' as variables
 SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
 PERMIT        = "PermitLog.xes"                 #contains   7065 traces  #number of unique events = 51    13% uncertain
 BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number of unique events = 24    38% uncertain
 BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number of unique events = 9     93% uncertain
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
-path_to_logs = Path('../bachelor_thesis/python/logs').resolve()
-#print("Logs at: ", path_to_logs)
-
-log = xes_importer.apply(str(path_to_logs) + '/' + SEPSIS)
-
-activities = attributes_filter.get_attribute_values(log, "concept:name")
-print("------------------------------------------------------------------------------------------------------------------- \n")
-
-all_events = list(activities.keys())
+log = load_log(SEPSIS)
+all_events = get_events_sorted(log)
 NUM_TRACES = len(log)
-certain_log, uncertain_log = split_traces(log)
+certain_log, uncertain_log = split_log(log)
 
 frequency_of_events_log = frequency_of_events(all_events, log)
 frequency_of_events_certain = frequency_of_events(all_events, certain_log)
@@ -196,6 +202,7 @@ certain_traces_as_sets = make_trace_sets(certain_log)
 uncertain_traces_as_sets = make_trace_sets(uncertain_log)
 num_uncertain_sequences = num_uncertain_sequences(uncertain_traces_as_sets, uncertain_sequences)
 
+print("------------------------------------------------------------------------------------------------------------------- \n")
 print("Number of traces: ", len(log))
 print("Avg trace length:", log_avg)
 print("Min trace length:", log_min)
@@ -217,65 +224,67 @@ print("Which are: \n", all_events, "\n")
 print("Uncertain Sets in the log are (with", len(num_uncertain_sequences),"kinds of uncertain sets):")
 pprint(num_uncertain_sequences)
 print()
-#pprint(uncertain_traces_as_sets[123])
-#print_case(uncertain_log, 123)
-
+pprint(uncertain_traces_as_sets[4])
+print_case(uncertain_log, 4)
 #visualize data of log
-color_log, color_certain, color_uncertain = 'tab:blue', 'darkseagreen', 'sandybrown'
-#visualize basic log information
+def visualize_log():
+    color_log, color_certain, color_uncertain = 'tab:blue', 'darkseagreen', 'sandybrown'
+    #visualize basic log information
 
-fig, ax = plt.subplots(1,2)
-#certain and uncertain log length as pie chart
-def func(pct, allvals):
-    absolute = int(pct/100.*np.sum(allvals))
-    return "{:.1f}%\n({:d} Traces)".format(pct, absolute)
+    fig, ax = plt.subplots(1,2)
+    #certain and uncertain log length as pie chart
+    def func(pct, allvals):
+        absolute = int(pct/100.*np.sum(allvals))
+        return "{:.1f}%\n({:d} Traces)".format(pct, absolute)
 
-labels = ['Certain Part', 'Uncertain Part']
-sizes = [len(certain_log)/NUM_TRACES*100, len(uncertain_log)/NUM_TRACES*100]
-wedges, texts, autotexts = ax[0].pie(sizes, startangle=90, colors = [color_certain, color_uncertain], 
-                                        
-                                        autopct=lambda pct: func(pct, [len(certain_log), len(uncertain_log)]), textprops=dict(color="k"))
-ax[0].set_title('Traces of the Log that are Certain, Uncertain Respectively')
+    labels = ['Certain Part', 'Uncertain Part']
+    sizes = [len(certain_log)/NUM_TRACES*100, len(uncertain_log)/NUM_TRACES*100]
+    wedges, texts, autotexts = ax[0].pie(sizes, startangle=90, colors = [color_certain, color_uncertain], 
 
-#measures for trace length
-X1 = ['avg', 'min', 'max', 'c_avg', 'c_min', 'c_max', 'u_avg', 'u_min', 'u_max'] 
-y1 = [log_avg, log_min, log_max, certain_avg, certain_min, certain_max, uncertain_avg, uncertain_min, uncertain_max]
-r2 = ax[1].bar(X1, y1, color=[color_log, color_log, color_log, color_certain, color_certain, color_certain, color_uncertain, color_uncertain, color_uncertain])
-ax[1].set_title('Trace Length Measures in the whole, certain and uncertain Log')
-ax[1].set_ylabel('Number of Events')
+                                            autopct=lambda pct: func(pct, [len(certain_log), len(uncertain_log)]), textprops=dict(color="k"))
+    ax[0].set_title('Traces of the Log that are Certain, Uncertain Respectively')
 
-#frequency of each even in the log
-fig1, ax1 = plt.subplots(3,1)
-ax1[0].bar(range(len(frequency_of_events_log)), frequency_of_events_log.values(), align='center')
-ax1[0].set_title('Log')
-ax1[0].set_ylabel('Amount of Occurance')
-ax1[1].bar(range(len(frequency_of_events_certain)), frequency_of_events_certain.values(), align='center')
-ax1[1].set_title('Certain Log')
-ax1[1].set_ylabel('Amount of Occurance')
-ax1[2].bar(range(len(frequency_of_events_uncertain)), frequency_of_events_uncertain.values(), align='center')
-ax1[2].set_title('Uncertain Log')
-ax1[2].set_ylabel('Amount of Occurance')
-fig1.suptitle('Frequency of Events in the whole, certain and uncertain log', fontsize=20)
-plt.setp(ax1, xticks=[i for i in range(len(all_events))], xticklabels = list(frequency_of_events_log.keys()))
+    #measures for trace length
+    X1 = ['avg', 'min', 'max', 'c_avg', 'c_min', 'c_max', 'u_avg', 'u_min', 'u_max'] 
+    y1 = [log_avg, log_min, log_max, certain_avg, certain_min, certain_max, uncertain_avg, uncertain_min, uncertain_max]
+    r2 = ax[1].bar(X1, y1, color=[color_log, color_log, color_log, color_certain, color_certain, color_certain, color_uncertain, color_uncertain, color_uncertain])
+    ax[1].set_title('Trace Length Measures in the whole, certain and uncertain Log')
+    ax[1].set_ylabel('Number of Events')
 
-# visualize uncertain trace frequency
-X = list()
-y = list()
-for key in num_uncertain_sequences:
-    s = ''
-    for event in key:
-        s += event[:2]
-    X.append(s)
-    y.append(num_uncertain_sequences[key])
+    #frequency of each even in the log
+    fig1, ax1 = plt.subplots(3,1)
+    ax1[0].bar(range(len(frequency_of_events_log)), frequency_of_events_log.values(), align='center')
+    ax1[0].set_title('Log')
+    ax1[0].set_ylabel('Amount of Occurance')
+    ax1[1].bar(range(len(frequency_of_events_certain)), frequency_of_events_certain.values(), align='center')
+    ax1[1].set_title('Certain Log')
+    ax1[1].set_ylabel('Amount of Occurance')
+    ax1[2].bar(range(len(frequency_of_events_uncertain)), frequency_of_events_uncertain.values(), align='center')
+    ax1[2].set_title('Uncertain Log')
+    ax1[2].set_ylabel('Amount of Occurance')
+    fig1.suptitle('Frequency of Events in the whole, certain and uncertain log', fontsize=20)
+    plt.setp(ax1, xticks=[i for i in range(len(all_events))], xticklabels = list(frequency_of_events_log.keys()))
 
-fig2, ax2 = plt.subplots()    
-ax2.bar(X,y)
-ax2.set_title('Uncertain Set Frequency')
-ax2.set_xlabel('Uncertain Trace Set')
-ax2.set_ylabel('Frequency in the Log')
+    # visualize uncertain trace frequency
+    X = list()
+    y = list()
+    for key in num_uncertain_sequences:
+        s = ''
+        for event in key:
+            s += event[:2]
+        X.append(s)
+        y.append(num_uncertain_sequences[key])
+
+    fig2, ax2 = plt.subplots()    
+    ax2.bar(X,y)
+    ax2.set_title('Uncertain Set Frequency')
+    ax2.set_xlabel('Uncertain Trace Set')
+    ax2.set_ylabel('Frequency in the Log')
 
 
-plt.show()
+    plt.show()
+#visualize_log() """
+
 
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
