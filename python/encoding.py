@@ -18,7 +18,6 @@ class log_encoder():
 
         #only needed for embeddings
         if embedding_dim:
-            embedding_dim = embedding_dim
             embed_init = tf.random.uniform([len(self.activities)+self.num_oov_buckets, embedding_dim])
             self.embedding_matrix = tf.Variable(embed_init)
 

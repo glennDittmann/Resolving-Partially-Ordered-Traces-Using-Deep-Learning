@@ -73,7 +73,7 @@ def visualize_log():
 
 #loads log from a given .xes file, specified with the filename (file must lay on same level as function calling script)
 def load_log(filename):
-    path_to_logs = Path('../python/logs').resolve()
+    path_to_logs = Path('../logs').resolve()
     log = xes_importer.apply(str(path_to_logs) + '/' + filename)
     return log
 
