@@ -1,0 +1,11 @@
+would there be any benefit of training the network with the certain logs as well? i think they will only make the obvious mapping of {i} to i more clear
+
+is an rnn the right choice of nerual network architecture? i think so yes, because we have differtent input sizes and time dependency
+
+feed the netrwork events or traces? at some point the network shoould now which events belong to a certain trace
+	so feed in a trace event wise (event for event) unti the trace is finished?
+
+embedding or one-hot-encoding for input-encoding and encode on event or trace level or both?
+	with embeddings we also had oov buckets for new uncertain sets of activities
+
+
