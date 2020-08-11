@@ -31,7 +31,23 @@ class log_encoder():
         cat_one_hot = tf.one_hot(cat_indices, depth=len(self.activities) + self.num_oov_buckets)
         return cat_one_hot
 
+    def one_hot_encode_log(self, log):
+        #log is not in the format as when loaded with pm4py, but rather a list(=log) of lists(=traces) containing the activities as strings
+        encoded_inputs = []
+        for trace in log:
+            encoded_inputs.append(self.one_hot_encode_trace(trace))
+        
+        return encoded_inputs
+
     def embed_encode_trace(self, trace):
         cat_indices = self.lookup_indices(trace)
         cat_embed = tf.nn.embedding_lookup(self.embedding_matrix, cat_indices)
         return cat_embed
+
+    def embed_encode_log(self, log):
+        #log is not in the format as when loaded with pm4py, but rather a list(=log) of lists(=traces) containing the activities as strings
+        encoded_inputs = []
+        for trace in log:
+            encoded_inputs.append(self.embed_encode_trace(trace))
+        
+        return encoded_inputs

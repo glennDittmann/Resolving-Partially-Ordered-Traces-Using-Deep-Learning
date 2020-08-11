@@ -14,6 +14,204 @@ matplotlib.rc('xtick', labelsize=8)
 import numpy as np
 from pathlib import Path
 
+#loads log from a given .xes file, specified with the filename (file must lay on same level as function calling script)
+def load_log(filename):
+    path_to_logs = Path('../logs').resolve()
+    log = xes_importer.apply(str(path_to_logs) + '/' + filename)
+    return log
+
+#prints a certain trace, given by number
+def print_case(log, num):
+    case = log[num]
+    print("\n case id: %s" % (case.attributes["concept:name"]))
+    for event_index, event in enumerate(case):
+        a = "event index: " + str(event_index)
+        b = "event activity: " + str(event["concept:name"])
+        c = "time: " + str(event["time:timestamp"])
+        print('{:20s}{:60s}{:20s}'.format(a,b,c))
+
+#prints all cases up to the given number
+def print_cases(log, num_traces):
+    count = 0
+    for case_index, case in enumerate(log):
+        print("\n case index: %d  case id: %s" % (case_index, case.attributes["concept:name"]))
+        for event_index, event in enumerate(case):
+            a = "event index: " + str(event_index)
+            b = "event activity: " + str(event["concept:name"])
+            c = "time: " + str(event["time:timestamp"])
+            print('{:20s}{:60s}{:20s}'.format(a,b,c))
+        count += 1
+        if(count > num_traces-1):
+            break
+    print()
+
+#prints the specified trace of a log(certain or uncertain)
+def better_print_trace_infos(log, num_trace, kind):
+    if kind == "c":
+        name = "Certain Trace"
+    elif kind == "u":
+        name = "Uncertain Trace" 
+    print(name, num_trace, "has length ", len(log[num_trace]))
+    log_trace_events = []
+    for event in log[num_trace]:
+        log_trace_events.append(event["concept:name"])
+    print("And its events are:")
+    print(log_trace_events, "\n")
+
+#gets a list of the unique events as strings, sorted alphabetically
+def get_events_sorted(log):
+    activities = attributes_filter.get_attribute_values(log, "concept:name")
+    all_events = list(activities.keys())
+    all_events.sort()
+    return all_events
+
+#retruns a list of the events from a particular trace from the log
+def get_trace(log, trace_index):
+    if trace_index > len(log)-1:
+        print("Trace index out of range")
+    else:
+        trace = [event["concept:name"] for event in log[trace_index]]
+        return trace
+
+#returns a list of lists, each containing the events from the traces of the given log
+def get_traces(log):
+    trace_list = list()
+    for case in log: 
+        trace_list.append([ event["concept:name"] for event in case ])
+            
+    return trace_list
+
+#checks if a case is certain, gets called by split traces
+def case_is_certain(case_time_list):
+    for i in range(0, len(case_time_list)-1):
+        if case_time_list[i] == case_time_list[i+1]:
+            return False
+    return True
+
+#splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
+def split_log(log):
+    certain_traces = list()
+    uncertain_traces = list()
+    for case in log:
+        times = list()
+        for event in case:
+            times.append(event["time:timestamp"])
+        if case_is_certain(times):
+            certain_traces.append(case)
+        else:
+            uncertain_traces.append(case)
+    return certain_traces, uncertain_traces
+
+#returns the amount of events in the log
+def num_events(log):
+    num_events = 0 
+    for case in log:
+        num_events += len(case)
+    return num_events
+
+#returns the average trace length for a log
+def avg_trace_length(log):
+    avg = 0
+    for case in log:
+        avg += len(case)
+    return round(avg / len(log),2)
+
+#returns the length of the shortest trace in a log
+def min_trace_length(log):
+    min = 10000
+    for case in log:
+        if len(case) < min:
+            min = len(case)
+    return min
+
+#returns the length of the longest trace in a log
+def max_trace_length(log):
+    max = 0
+    for case in log:
+        if len(case) >= max:
+            max = len(case)
+    return max
+
+#returns a list of dicts, for each trace, the keys for a trace are timestamps holding all events occuring at that time for a specific trace
+def make_trace_sets(log):
+    trace_as_sets = []
+    for i in range(0, len(log)):
+        j = 0
+        trace = dict()
+        while j < len(log[i]):
+            if str(log[i][j]["time:timestamp"]) in trace:
+                trace[str(log[i][j]["time:timestamp"])].append(log[i][j]["concept:name"])
+            else:
+                trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
+            j += 1
+        for key in trace:
+            trace[key].sort()
+        trace_as_sets.append(trace)
+    return trace_as_sets
+
+#eturns the traces as list, where events with same timestamp are concatenated
+def concatenate_trace_sets(log_set):
+    input_list = list()
+    for trace in log_set:
+        trace_list = list()
+        for key in trace:
+            event = str()
+            for e in trace[key]:
+                event += e
+            trace_list.append(event)
+        input_list.append(trace_list)
+    return input_list
+
+#gets the occuring uncertain sequences in the log as a set datastructure 
+def get_uncertain_sequences(uncertain_log):
+    uncertain_sequences = set()
+    for i in range(0, len(uncertain_log)):
+        j = 0
+        while j < len(uncertain_log[i])-1:
+            sequence = list()
+            if uncertain_log[i][j]["time:timestamp"] == uncertain_log[i][j+1]["time:timestamp"]:
+                time = uncertain_log[i][j]["time:timestamp"] 
+                while j < len(uncertain_log[i]) and time == uncertain_log[i][j]["time:timestamp"]:
+                    sequence.append(uncertain_log[i][j]["concept:name"])
+                    j += 1
+            else:
+                j += 1    
+            if sequence:
+                uncertain_sequences.add(tuple(sorted(sequence)))
+    return uncertain_sequences
+
+def get_list_uncertain_events(uncertain_sequences):
+    list_uncertain_events = list()
+    for tup in uncertain_sequences:
+        event = str()
+        for element in tup:
+            event += element
+        list_uncertain_events.append(event)
+    return list_uncertain_events
+
+#gets for the occuring uncertain sequences the amount of times they come up in the log, as a dict data structure
+def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
+    num_uncertain_sequences = dict()
+    for trace in uncertain_trace_as_sets:
+        for key in trace:
+            if len(trace[key]) > 1:
+                if tuple(trace[key]) not in num_uncertain_sequences:
+                    num_uncertain_sequences[tuple(trace[key])] = 1
+                else:
+                    num_uncertain_sequences[tuple(trace[key])] += 1
+
+    return num_uncertain_sequences
+
+def frequency_of_events(all_events, log):
+    frequency_of_events = dict()
+    for event in all_events:
+        frequency_of_events[event] = 0
+    for case in log:
+        for event in case:
+            frequency_of_events[event["concept:name"]] += 1
+
+    return frequency_of_events
+
 def visualize_log():
     color_log, color_certain, color_uncertain = 'tab:blue', 'darkseagreen', 'sandybrown'
     #visualize basic log information
@@ -71,190 +269,6 @@ def visualize_log():
 
     plt.show()
 
-#loads log from a given .xes file, specified with the filename (file must lay on same level as function calling script)
-def load_log(filename):
-    path_to_logs = Path('../logs').resolve()
-    log = xes_importer.apply(str(path_to_logs) + '/' + filename)
-    return log
-
-#gets a list of the unique events as strings, sorted alphabetically
-def get_events_sorted(log):
-    activities = attributes_filter.get_attribute_values(log, "concept:name")
-    all_events = list(activities.keys())
-    all_events.sort()
-    return all_events
-
-#prints the specified trace of a log(certain or uncertain)
-def better_print_trace_infos(log, num_trace, kind):
-    if kind == "c":
-        name = "Certain Trace"
-    elif kind == "u":
-        name = "Uncertain Trace" 
-    print(name, num_trace, "has length ", len(log[num_trace]))
-    log_trace_events = []
-    for event in log[num_trace]:
-        log_trace_events.append(event["concept:name"])
-    print("And its events are:")
-    print(log_trace_events, "\n")
-
-
-#prints a certain trace, given by number
-def print_case(log, num):
-    case = log[num]
-    print("\n case id: %s" % (case.attributes["concept:name"]))
-    for event_index, event in enumerate(case):
-        a = "event index: " + str(event_index)
-        b = "event activity: " + str(event["concept:name"])
-        c = "time: " + str(event["time:timestamp"])
-        print('{:20s}{:60s}{:20s}'.format(a,b,c))
-
-
-#prints all cases up to the given number
-def print_cases(log, num_traces):
-    count = 0
-    for case_index, case in enumerate(log):
-        print("\n case index: %d  case id: %s" % (case_index, case.attributes["concept:name"]))
-        for event_index, event in enumerate(case):
-            a = "event index: " + str(event_index)
-            b = "event activity: " + str(event["concept:name"])
-            c = "time: " + str(event["time:timestamp"])
-            print('{:20s}{:60s}{:20s}'.format(a,b,c))
-        count += 1
-        if(count > num_traces-1):
-            break
-    print()
-
-
-#checks if a case is certain, gets called by split traces
-def case_is_certain(case_time_list):
-    for i in range(0, len(case_time_list)-1):
-        if case_time_list[i] == case_time_list[i+1]:
-            return False
-    return True
-
-
-#splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
-def split_log(log):
-    certain_traces = list()
-    uncertain_traces = list()
-    for case in log:
-        times = list()
-        for event in case:
-            times.append(event["time:timestamp"])
-        if case_is_certain(times):
-            certain_traces.append(case)
-        else:
-            uncertain_traces.append(case)
-    return certain_traces, uncertain_traces
-
-#returns the amount of events in the log
-def num_events(log):
-    num_events = 0 
-    for case in log:
-        num_events += len(case)
-    return num_events
-
-#retruns a list of the events from a particular trace from the log
-def get_trace(log, trace_index):
-    if trace_index > len(log)-1:
-        print("Trace index out of range")
-    else:
-        trace = [event["concept:name"] for event in log[trace_index]]
-        return trace
-
-#returns a list of lists, each containing the events from the traces of the given log
-def get_traces(log):
-    trace_list = list()
-    for case in log: 
-        trace_list.append([ event["concept:name"] for event in case ])
-            
-    return trace_list
-
-#returns the average trace length for a log
-def avg_trace_length(log):
-    avg = 0
-    for case in log:
-        avg += len(case)
-    return round(avg / len(log),2)
-
-
-#returns the length of the shortest trace in a log
-def min_trace_length(log):
-    min = 10000
-    for case in log:
-        if len(case) < min:
-            min = len(case)
-    return min
-
-#returns the length of the longest trace in a log
-def max_trace_length(log):
-    max = 0
-    for case in log:
-        if len(case) >= max:
-            max = len(case)
-    return max
-
-
-#returns a list of dicts, for each trace, the keys for a trace are timestamps holding all events occuring at that time for a specific trace
-def make_trace_sets(log):
-    trace_as_sets = []
-    for i in range(0, len(log)):
-        j = 0
-        trace = dict()
-        while j < len(log[i]):
-            if str(log[i][j]["time:timestamp"]) in trace:
-                trace[str(log[i][j]["time:timestamp"])].append(log[i][j]["concept:name"])
-            else:
-                trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
-            j += 1
-        for key in trace:
-            trace[key].sort()
-        trace_as_sets.append(trace)
-    return trace_as_sets
-
-
-#gets the occuring uncertain sequences in the log as a set datastructure 
-def get_uncertain_sequences(uncertain_log):
-    uncertain_sequences = set()
-    for i in range(0, len(uncertain_log)):
-        j = 0
-        while j < len(uncertain_log[i])-1:
-            sequence = list()
-            if uncertain_log[i][j]["time:timestamp"] == uncertain_log[i][j+1]["time:timestamp"]:
-                time = uncertain_log[i][j]["time:timestamp"] 
-                while j < len(uncertain_log[i]) and time == uncertain_log[i][j]["time:timestamp"]:
-                    sequence.append(uncertain_log[i][j]["concept:name"])
-                    j += 1
-            else:
-                j += 1    
-            if sequence:
-                uncertain_sequences.add(tuple(sorted(sequence)))
-    return uncertain_sequences
-
-
-#gets for the occuring uncertain sequences the amount of times they come up in the log, as a dict data structure
-def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
-    num_uncertain_sequences = dict()
-    for trace in uncertain_trace_as_sets:
-        for key in trace:
-            if len(trace[key]) > 1:
-                if tuple(trace[key]) not in num_uncertain_sequences:
-                    num_uncertain_sequences[tuple(trace[key])] = 1
-                else:
-                    num_uncertain_sequences[tuple(trace[key])] += 1
-
-    return num_uncertain_sequences
-
-
-def frequency_of_events(all_events, log):
-    frequency_of_events = dict()
-    for event in all_events:
-        frequency_of_events[event] = 0
-    for case in log:
-        for event in case:
-            frequency_of_events[event["concept:name"]] += 1
-
-    return frequency_of_events
 
 # set log path' as variables
 """ SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
@@ -307,14 +321,10 @@ for key in num_uncertain_sequences:
     total_number += num_uncertain_sequences[key]
 print("The total number of uncertain event sets appearing in the log is:", total_number)
 pprint(num_uncertain_sequences)
-b = {2:0,3:0,4:0}
-for key in num_uncertain_sequences:
-    b[len(key)] += 1
-pprint(b)
 print()
 pprint(uncertain_traces_as_sets[10])
-print_case(uncertain_log, 10)
- """
+print_case(uncertain_log, 10) """
+
 #visualize data of log
 #visualize_log()
 
