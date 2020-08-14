@@ -93,7 +93,9 @@
 \section{Background}
 %%% ===============================================================================
 	\subsection{Preliminaries}
-		Process Mining -> Conformance Checking \\
+		In the field of process mining, a subfield of (see process mining book) we deliberately investigate the happenings of processes of the "real world". 
+		It is about modeling, checking and improving such processes. Furthermore we can apply the area of conformance, checking on the area of process mining, which is basically a more in depth investigation how well a model of a process and the actual execution of such processes are conforming. This chapter is therefore used to gently introduce typical concepts that are used in process mining and more precisely defining the attributes we need in order to answer the research question. Additionally our (main) method to solve the problem of finding resolutions for partially ordered traces will be using neural networks, i.e. a special method from the wide field of machine learning. Thus we will give a short overview over typical machine learning ideas and more concisely introduce artificial neural networks, all of their properties and capabilities as well as the different network architectures we will be have used. \\
+		Most of the plain mathematical concepts should be of knowledge to the reader, and therefore instead of defined mostly explained in text. There might be some exceptions relating to the fields of either conformance checking or neural network such as conformance checking measures or algorithms, gradient descent functions for error minimizing in ANN's or the way of encoding input data in an ANN.
 		\begin{defn}{Activity}
 			Activities are ... captured in the set of all activities.
 		\end{defn}
@@ -103,8 +105,8 @@
 		\begin{defn}{Trace}
 			A trace is...
 		\end{defn}
-		\begin{defn}{Log}
-			A log is...
+		\begin{defn}{Event Log}
+			An event log is...
 		\end{defn}
 		Based on the timestamps associated with events in a given log, we define a partial ordering of events for a certain trace. Thus an event e1 < e2, if the timestamp of e1, i.e. time(e1), is smaller than/happens before, the timestamp of e2, i.e time(e2). Otherwise the timestamps of e1 and e2 are the same, leading to e1 = e2, i.e. time(e1) = time(e2).
 		\begin{defn}{Uncertain Trace}
@@ -115,7 +117,21 @@
 		\end{defn}
 		Based on this, if all traces in a log are certain, we call it a certain log and an uncertain log otherwise. \\
 		Event-Name, Event-Alias, Event-Properties \\
-		Neural Network \\
+		\begin{defn}{Artifical Neural Network}
+			Artifial Neural Network (ANN)
+		\end{defn}
+		\begin{defn}{feedforward-ANN}
+			feedforward-ANN
+		\end{defn}
+		\begin{defn}{Recurrent Nerual Network}
+			Recurrent Neural Network (RNN)
+		\end{defn}
+		\begin{defn}{One-Hot-Encoding}
+			One-Hot-Encoding
+		\end{defn}
+		\begin{defn}{Embed-Encoding}
+			Embed-Encoding
+		\end{defn}
 		Partial Order, Total Order \\ 
 	
 	\subsection{Related Work}

@@ -1,11 +1,21 @@
-would there be any benefit of training the network with the certain logs as well? i think they will only make the obvious mapping of {i} to i more clear
+would there be any benefit of training the network with the certain logs as well? i think they will only make the obvious mapping of "{i}" to "i" more clear
 
-is an rnn the right choice of nerual network architecture? i think so yes, because we have differtent input sizes and time dependency
+WHAT IS THE TRAINING DATA, ESPECIALLY THE TARGET VALUE = CORRECT ORDER
 
-feed the netrwork events or traces? at some point the network shoould now which events belong to a certain trace
-	so feed in a trace event wise (event for event) unti the trace is finished?
+feed the network events or traces? at some point the network should now which events belong to a certain trace
+	so feed in a trace event wise (event for event) until the trace is finished?
+	-> yes feed in a trace event-wise, rnn can get independet long inputs, exactly what traces are
 
 embedding or one-hot-encoding for input-encoding and encode on event or trace level or both?
 	with embeddings we also had oov buckets for new uncertain sets of activities
+	encoding on event level makes sense, as there are too few traces and too many possible trace combinations, and it also corresponds with matthias proposals
+
+research question: we want to find the right order for unordered slices of traces that otherwise come ordered
+	-> we have a lot of already ordered parts = information, we should not omit
+	-> are we learning a mapping from {uncertain sequence} -> certain sequence?
+	-> or is it a complification of the "next activity"-Problem? 
+	is the RNN implicitely taking into account the ordered activities that come after an unordered sequence?
+		now, the RNN learns / minimzes the error of a function. the activity at time t is a function of only the previous timesteps, cause now 
+		exectution of (business) process activties is dependent on future (sight)
 
 

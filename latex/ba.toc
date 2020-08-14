@@ -8,19 +8,19 @@
 \contentsline {section}{\numberline {2}Background}{4}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Preliminaries}{4}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Related Work}{5}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Problem Exposition (optional)}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Context / Business Understanding (SM1)}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Data Understanding (SM1)}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Detailed Research Questions (SM2)}{6}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Detailed Method (SM3)}{6}{subsection.3.4}%
-\contentsline {section}{\numberline {4}First Real Chapter addressing first Research Problem}{6}{section.4}%
-\contentsline {subsection}{\numberline {4.1}First Sub-Problem}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Second Sub-Problem}{6}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Second Real Chapter}{6}{section.5}%
-\contentsline {section}{\numberline {6}Evaluation}{6}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Objective (SM2)}{6}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Setup (SM3)}{6}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Execution (SM4)}{6}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Results (SM5)}{6}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Discussion (SM6)}{6}{subsection.6.5}%
-\contentsline {section}{\numberline {7}Conclusion}{6}{section.7}%
+\contentsline {section}{\numberline {3}Problem Exposition (optional)}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Context / Business Understanding (SM1)}{7}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Data Understanding (SM1)}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Detailed Research Questions (SM2)}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Detailed Method (SM3)}{7}{subsection.3.4}%
+\contentsline {section}{\numberline {4}First Real Chapter addressing first Research Problem}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}First Sub-Problem}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Second Sub-Problem}{7}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Second Real Chapter}{7}{section.5}%
+\contentsline {section}{\numberline {6}Evaluation}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Objective (SM2)}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Setup (SM3)}{7}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Execution (SM4)}{7}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Results (SM5)}{7}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Discussion (SM6)}{7}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Conclusion}{7}{section.7}%

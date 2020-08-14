@@ -20,57 +20,61 @@ def load_log(filename):
     log = xes_importer.apply(str(path_to_logs) + '/' + filename)
     return log
 
-#prints a certain trace, given by number
-def print_case(log, num):
-    case = log[num]
-    print("\n case id: %s" % (case.attributes["concept:name"]))
-    for event_index, event in enumerate(case):
-        a = "event index: " + str(event_index)
-        b = "event activity: " + str(event["concept:name"])
-        c = "time: " + str(event["time:timestamp"])
-        print('{:20s}{:60s}{:20s}'.format(a,b,c))
+#splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
+def split_log(log):
+    certain_log = list()
+    uncertain_log = list()
+    for case in log:
+        times = list()
+        for event in case:
+            times.append(event["time:timestamp"])
+        if case_is_certain(times):
+            certain_log.append(case)
+        else:
+            uncertain_log.append(case)
+    return certain_log, uncertain_log
 
-#prints all cases up to the given number
-def print_cases(log, num_traces):
-    count = 0
-    for case_index, case in enumerate(log):
-        print("\n case index: %d  case id: %s" % (case_index, case.attributes["concept:name"]))
-        for event_index, event in enumerate(case):
+#checks if a case is certain, gets called by split traces
+def case_is_certain(case_time_list):
+    #doesnt take into account 
+    for i in range(0, len(case_time_list)-1):
+        if case_time_list[i] == case_time_list[i+1]:
+            return False
+    return True
+
+#prints the trace at index = num
+def print_trace(log, num):
+    if num > len(log):
+        print("Error: index out of range.")
+    else:
+        case = log[num]
+        print("\n case id: %s" % (log[num].attributes["concept:name"]))
+        for event_index, event in enumerate(log[num]):
             a = "event index: " + str(event_index)
             b = "event activity: " + str(event["concept:name"])
             c = "time: " + str(event["time:timestamp"])
             print('{:20s}{:60s}{:20s}'.format(a,b,c))
-        count += 1
-        if(count > num_traces-1):
-            break
-    print()
 
-#prints the specified trace of a log(certain or uncertain)
-def better_print_trace_infos(log, num_trace, kind):
-    if kind == "c":
-        name = "Certain Trace"
-    elif kind == "u":
-        name = "Uncertain Trace" 
-    print(name, num_trace, "has length ", len(log[num_trace]))
-    log_trace_events = []
-    for event in log[num_trace]:
-        log_trace_events.append(event["concept:name"])
-    print("And its events are:")
-    print(log_trace_events, "\n")
+#prints all cases up to the given number
+def print_traces(log, num_traces):
+    if(num_traces > len(log)):
+        print("You want to print more traces then there are in the log!")
+    else:
+        for i in range(num_traces):
+            print_trace(log, i)
 
-#gets a list of the unique events as strings, sorted alphabetically
-def get_events_sorted(log):
+#gets a list of the unique events as strings
+def get_events(log):
     activities = attributes_filter.get_attribute_values(log, "concept:name")
     all_events = list(activities.keys())
-    all_events.sort()
     return all_events
 
-#retruns a list of the events from a particular trace from the log
-def get_trace(log, trace_index):
-    if trace_index > len(log)-1:
-        print("Trace index out of range")
+#returns a list of the events from a particular trace from the log
+def get_trace(log, index):
+    if index > len(log)-1:
+        print("Error: index out of range.")
     else:
-        trace = [event["concept:name"] for event in log[trace_index]]
+        trace = [event["concept:name"] for event in log[index]]
         return trace
 
 #returns a list of lists, each containing the events from the traces of the given log
@@ -80,27 +84,6 @@ def get_traces(log):
         trace_list.append([ event["concept:name"] for event in case ])
             
     return trace_list
-
-#checks if a case is certain, gets called by split traces
-def case_is_certain(case_time_list):
-    for i in range(0, len(case_time_list)-1):
-        if case_time_list[i] == case_time_list[i+1]:
-            return False
-    return True
-
-#splits a log in two logs, the one holding only totally order traces and the one holding only partially ordered traces
-def split_log(log):
-    certain_traces = list()
-    uncertain_traces = list()
-    for case in log:
-        times = list()
-        for event in case:
-            times.append(event["time:timestamp"])
-        if case_is_certain(times):
-            certain_traces.append(case)
-        else:
-            uncertain_traces.append(case)
-    return certain_traces, uncertain_traces
 
 #returns the amount of events in the log
 def num_events(log):
@@ -112,29 +95,29 @@ def num_events(log):
 #returns the average trace length for a log
 def avg_trace_length(log):
     avg = 0
-    for case in log:
-        avg += len(case)
+    for trace in log:
+        avg += len(trace)
     return round(avg / len(log),2)
 
 #returns the length of the shortest trace in a log
 def min_trace_length(log):
     min = 10000
-    for case in log:
-        if len(case) < min:
-            min = len(case)
+    for trace in log:
+        if len(trace) < min:
+            min = len(trace)
     return min
 
 #returns the length of the longest trace in a log
 def max_trace_length(log):
     max = 0
-    for case in log:
-        if len(case) >= max:
-            max = len(case)
+    for trace in log:
+        if len(trace) >= max:
+            max = len(trace)
     return max
 
-#returns a list of dicts, for each trace, the keys for a trace are timestamps holding all events occuring at that time for a specific trace
-def make_trace_sets(log):
-    trace_as_sets = []
+#returns a list of dicts, for each trace, the keys for a trace are timestamps holding all events occuring at that time for a specific trace (sorted)
+def make_set_log(log, sort=True):
+    set_log = []
     for i in range(0, len(log)):
         j = 0
         trace = dict()
@@ -144,13 +127,14 @@ def make_trace_sets(log):
             else:
                 trace[str(log[i][j]["time:timestamp"])] = [log[i][j]["concept:name"]]
             j += 1
-        for key in trace:
-            trace[key].sort()
-        trace_as_sets.append(trace)
-    return trace_as_sets
+        if sort:
+            for key in trace:
+                trace[key].sort()
+        set_log.append(trace)
+    return set_log
 
 #eturns the traces as list, where events with same timestamp are concatenated
-def concatenate_trace_sets(log_set):
+def concatenate_trace_sets(set_log):
     input_list = list()
     for trace in log_set:
         trace_list = list()
@@ -177,10 +161,11 @@ def get_uncertain_sequences(uncertain_log):
             else:
                 j += 1    
             if sequence:
-                uncertain_sequences.add(tuple(sorted(sequence)))
+                uncertain_sequences.add(tuple(sorted(sequence)))  #make the sequences a tuple to be addable to the set
     return uncertain_sequences
 
-def get_list_uncertain_events(uncertain_sequences):
+#turns the uncertain seuqence (set of tuple) into a list of list data structure
+def make_list_uncertain_sequences(uncertain_sequences):
     list_uncertain_events = list()
     for tup in uncertain_sequences:
         event = str()
@@ -190,9 +175,9 @@ def get_list_uncertain_events(uncertain_sequences):
     return list_uncertain_events
 
 #gets for the occuring uncertain sequences the amount of times they come up in the log, as a dict data structure
-def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
+def freq_uncertain_sequences(set_log, uncertain_sequences):
     num_uncertain_sequences = dict()
-    for trace in uncertain_trace_as_sets:
+    for trace in set_log:
         for key in trace:
             if len(trace[key]) > 1:
                 if tuple(trace[key]) not in num_uncertain_sequences:
@@ -202,12 +187,14 @@ def num_uncertain_sequences(uncertain_trace_as_sets, uncertain_sequences):
 
     return num_uncertain_sequences
 
-def frequency_of_events(all_events, log):
+# returns for each single event its frequency in the log
+def freq_of_events(log):
+    unique_events = get_events(log)
     frequency_of_events = dict()
-    for event in all_events:
+    for event in unique_events:
         frequency_of_events[event] = 0
-    for case in log:
-        for event in case:
+    for trace in log:
+        for event in trace:
             frequency_of_events[event["concept:name"]] += 1
 
     return frequency_of_events
@@ -271,14 +258,14 @@ def visualize_log():
 
 
 # set log path' as variables
-""" SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
+SEPSIS        = "Sepsis_Cases_Event_Log.xes"    #contains   1050 traces  #number of unique events = 16    96% uncertain
                                                 #num of uncertain event sets: 3079 #number of uncertain events:
 PERMIT        = "PermitLog.xes"                 #contains   7065 traces  #number of unique events = 51    13% uncertain
 BPI_2012      = "BPI_Challenge_2012.xes"        #contains  13087 traces  #number of unique events = 24    38% uncertain
 BPI_2014      = "BPI_Challenge_2014.xes"        #contains  41353 traces  #number of unique events = 9     93% uncertain
 TRAFFIC_FINES = "traffic_fines.xes"             #contains 150370 traces  #number of unique events = 11     6% uncertain
 
-log = load_log(SEPSIS)
+""" log = load_log(SEPSIS)
 all_events = get_events_sorted(log)
 NUM_TRACES = len(log)
 certain_log, uncertain_log = split_log(log)
@@ -331,12 +318,3 @@ print_case(uncertain_log, 10) """
 
 #TODO: create training set of a small log (supposedly BPI_2012, and 80% of the certain traces, 
 #            the rest 20% traces can be used for evalutaion; order in the log = correct order)
-
-#TODO: think of how to map event names / datetime.datetime as NN input and what would the output be
-
-#TODO:
-        #make the second chart align avg, min and max bars
-        #make a color legend for the first figure
-        #set colors for frequency of events 
-        #set colormap for higher values for frequency of events and frequency of uncertain sets
-        #write numbers over the bars 
