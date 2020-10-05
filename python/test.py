@@ -1,5 +1,4 @@
 import pprint
-from math import comb
 from xes_read import *
 from encoding import *
 
@@ -47,6 +46,3 @@ pprint(certain_log_sets[17])
 
 #for assuming the correct order is as in the log and only using the certain log
 encoded_targets = encoder.one_hot_encode_log(concatenated_certain_log) #it's the same as the encoded input in this case
-
-for event in log[0]:
-    print(event)

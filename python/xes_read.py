@@ -311,7 +311,7 @@ pprint(num_uncertain_sequences)
 print()
 pprint(uncertain_traces_as_sets[10])
 print_case(uncertain_log, 10) """
-
+load_log(SEPSIS)
 #visualize data of log
 #visualize_log()
 

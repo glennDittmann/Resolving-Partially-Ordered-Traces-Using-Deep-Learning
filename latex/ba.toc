@@ -7,20 +7,26 @@
 \contentsline {subsection}{\numberline {1.5}Findings (SM5, SM6)}{4}{subsection.1.5}%
 \contentsline {section}{\numberline {2}Background}{4}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Preliminaries}{4}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Related Work}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.2}Related Work}{6}{subsection.2.2}%
 \contentsline {section}{\numberline {3}Problem Exposition (optional)}{7}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Context / Business Understanding (SM1)}{7}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Data Understanding (SM1)}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Detailed Research Questions (SM2)}{7}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Detailed Method (SM3)}{7}{subsection.3.4}%
-\contentsline {section}{\numberline {4}First Real Chapter addressing first Research Problem}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}First Sub-Problem}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Second Sub-Problem}{7}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Second Real Chapter}{7}{section.5}%
-\contentsline {section}{\numberline {6}Evaluation}{7}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Objective (SM2)}{7}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Setup (SM3)}{7}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Execution (SM4)}{7}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Results (SM5)}{7}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Discussion (SM6)}{7}{subsection.6.5}%
-\contentsline {section}{\numberline {7}Conclusion}{7}{section.7}%
+\contentsline {subsection}{\numberline {3.2}Data Understanding (SM1)}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Detailed Research Questions (SM2)}{8}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Detailed Method (SM3)}{8}{subsection.3.4}%
+\contentsline {section}{\numberline {4}First Real Chapter addressing first Research Problem}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Encoding the Event Data}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}What is the training data}{10}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Trying out a feedforward-ANN}{10}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Acquiring Data}{11}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Abstracting timestamps}{11}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Fraction of uncertain traces}{11}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Training and Test Data}{11}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Synthetical Data}{11}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Finding out the solutions and making predicitons}{11}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Evaluation}{11}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Objective (SM2)}{11}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Setup (SM3)}{11}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Execution (SM4)}{11}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Results (SM5)}{11}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Discussion (SM6)}{11}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Conclusion}{11}{section.7}%
