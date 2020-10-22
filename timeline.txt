@@ -1,0 +1,12 @@
+   Woche       |                               TO-DO
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+05.10 - 11.10  |  verifiziern der drei DSS Algorithmen, RNN API vorbereiten (Struktur für verschieden lange Traces, Neuronendichte, ...); Preliminaries-Kapitel schreiben
+
+12.10 - 18.10  |  Model trainieren und erste Ergebnisse festhalten (a la Niek Tax et. al.; 4 Möglichkeiten: 2 Encodings{A,B} und 2 Modelansätze {1,2}),
+                  Logdaten zum Einspielen bereit machen (Encoden, X/Y Werte, X Werte aufteilen in training, evaluation und test set); Background-Kapitel schreiben
+
+19.10 - 25.10  |  Ergebnisse für verschiedene Logs berechnen, Hyperparameter-Tuning; Ergebnisse und Experimental Setup notieren
+
+26.10 - 01.11  |  Ergebnisse mit den 3 DSS Algorithmen berechnen, beide Ergebnisse in Grafiken vergleichen, ebenfalls mit Baseline vergleichen(?)
+
+02.11 - 08.11  |  Kapitel (aus-)schreiben (Problem Exposition, Research Problem, Experimental Setup, Evaluation, Conclusion, Introduction, ...) Puffer
