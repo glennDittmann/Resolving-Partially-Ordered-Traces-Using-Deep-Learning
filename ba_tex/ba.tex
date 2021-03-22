@@ -1,0 +1,417 @@
+\documentclass[
+	a4paper,
+	pagesize,
+	pdftex,
+	12pt,
+	%twoside, % + BCOR darunter: für doppelseitigen Druck aktivieren, sonst beide deaktivieren
+	%BCOR=5mm, % Dicke der Bindung berücksichtigen (Copyshop fragen, wie viel das ist)
+	ngerman,
+	fleqn,
+	final,
+	]{scrartcl}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc} % Eingabekodierung: UTF-8
+\usepackage[T1]{fontenc} % ordentliche Trennung
+\usepackage[british]{babel}
+\usepackage{lmodern} % ordentliche Schriften
+\usepackage[unicode=true]{hyperref}
+\usepackage{setspace,graphicx,tikz,tabularx} % für Elemente der Titelseite
+\usepackage[draft=false,babel,tracking=true,kerning=true,spacing=true]{microtype} % optischer Randausgleich etc.
+%\usepackage{natbib}
+\usepackage[ddmmyyyy]{datetime}
+\usepackage{amsthm}
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{tabu}	
+\usepackage{xcolor}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+
+\renewcommand{\labelitemi}{$\diamond$}
+
+\begin{document}
+
+% Beispielhafte Nutzung der Vorlage für die Titelseite (bitte anpassen):
+\input{Institutsvorlage}
+\titel{Resolving Partially Ordered Traces \\ Using Deep Learning} % Titel der Arbeit
+\typ{Bachelorarbeit} % Typ der Arbeit:  Diplomarbeit, Masterarbeit, Bachelorarbeit
+\grad{Bachelor of Science (B. Sc.)} % erreichter Akademischer Grad
+% z.B.: Master of Science (M. Sc.), Master of Education (M. Ed.), Bachelor of Science (B. Sc.), Bachelor of Arts (B. A.), Diplominformatikerin
+\autor{Glenn Dittmann} % Autor der Arbeit, mit Vor- und Nachname
+\gebdatum{13.06.1993} % Geburtsdatum des Autors
+\gebort{Berlin} % Geburtsort des Autors
+\gutachter{Prof. Dr. Matthias Weidlich}{Prof. Dr. Han van der Aa} % Erst- und Zweitgutachter der Arbeit
+\mitverteidigung % entfernen, falls keine Verteidigung erfolgt
+\makeTitel
+
+%abstract
+
+% Hier folgt die eigentliche Arbeit (bei doppelseitigem Druck auf einem neuen Blatt):
+\tableofcontents
+\newpage
+
+\textsf{Purpose and scope of your entire report.} The purpose of your entire report is to make a 
+\textbf{scientific argument using the scientific method}.A scientific argument always has the following steps that all must come in this order.
+
+\begin{itemize}
+	\item[SM1] \textbf{Explicate the assumptions and state of the art} on which you are going to conduct your research to investigate your research problem / test the hypothesis.
+	\item[SM2] Clearly and precisely \textbf{formulate a research problem or hypothesis}.
+	\item[SM3] \textbf{Describe the (research) method} that you followed to investigate the problem / to test the hypothesis in a way that \textbf{allows someone else to reproduce your steps}. The method must include steps and criteria for evaluating whether you answered your question successfully or not.
+	\item[SM4] \textbf{Provide execution details} on how you followed the method in the given, specific situation.
+	\item[SM5] \textbf{Report your results} by describing and summarizing your measurements. You must not interpret your results.
+	\item[SM6] \textbf{Now interpret your results} by contextualizing your measurements and drawing conclusion that lead to answering your research problem or defining further follow-up research problems.
+	
+\end{itemize}
+
+%%% ===============================================================================
+\section{Introduction}\label{sec:introduction}
+%%% ===============================================================================
+	\textsf{Purpose and scope of Section \ref{sec:introduction}}. The introduction is a summary of your work and your scientific argument that shall be understandable to anyone in your scientific field, e.g., anyone in Data Science. A reader must be able to comprehend the problem, method, relevant execution details, results, and their interpretation by reading the introduction and the introduction alone.
+	Section~\ref{sec:introduction::topic} introduces the general topic of your research
+	Section~\ref{sec:introduction::state-of-art} discusses the state of the art and identifies a research.
+	Section~\ref{sec:introduction::research-question} then states the research problem to investigate.
+	Section~\ref{sec:introduction::method} explains the research method that was followed, possibly with execution details.
+	Section~\ref{sec:introduction::results} then presents the results and their interpretation. Only if a reader thinks they are not convinced or they need more details to reproduce your study, they shall have to read further. The individual chapters and sections provide the details for each of the steps in your scientific argument.
+	
+	You usually write the introduction chapter \emph{after} you wrote all other chapters, but you should keep on making notes for each of the subsections as you write the later chapters.
+	
+	\subsection{Context and Topic (SM1)}\label{sec:introduction::topic}
+	Process Mining is a subarea of data science and involves research to more accurately and efficiently perform the automated techniques of analyzing the formal description of processes, i.e. process models, and their corresponding executions, i.e. event logs. The techniques make it possible to reconstruct process models from real-life process executions (process discovery), enhancing the discovered models based on quality metrics (process enhancements) and checking the conformance of a given process model, discovered or hand-made, against a the traces of a log, i.e. execution sequences of the log. \cite{AalstWilvander2016Pm:d} \cite{accorsi2012exploitation}\\
+	Process Mining as a form of data mining takes recorded instances of process executions (event logs) to derive insights in the performance and behavior of the same. Generally an event log is a collection of events (steps of a process) which belong to execution instances of that process (model) (cases). Each event is annotated with at least three attributes for clarifying which process instance an event belongs to (case id), which process step was executed in that event (activity) and at what time this event was executed (timestamp). The latter allows for a total ordering over the events within a case.  \cite{dixit2018detection}	\\
+	"garbage in - garbage out" states that poor input data quality for data-to-information processes, such as process mining, implies poor quality information extracted. Data analysis applications such as stock market prediction or weather forecasts need precise timestamp information, whereas in process mining the information is needed to induce the total ordering over events within a case. This ordering is crucial to perform state of the art process mining techniques for discovery, performance or conformance checking of the given data/ event logs.\cite{dixit2018detection}. \\
+	\\
+	In the Process Mining Manifesto \cite{van2011process} the importance of timestamps for process mining is summarized. They can be used in \textit{enhancement} the model can be extended to make bottlenecks, service levels, throughput times, estimated waiting time for activities and frequencies visible. Only fully ordered logs can be treated as five star maturity level. Analyze temporal behavior during replay, add expected waiting times from differences in times per event. The problem of missing or inadequate timestamps is already addressed and interpolation of temporal data is suggested. Also the problem of trace probability is addressed, stating that considering all possible traces made from the activity set is not feasible and also very unlikely. So obviously not all possibilities occur and even for some of the occurring traces it is complicated that there frequency may vary a lot. (considered "noise")\cite{van2011process} \\
+	Timestamp related data quality issues and the following difficulties encountered are described in: \\
+	In \cite{AalstWilvander2016Pm:d} data quality issues in general and specifically related to missing / imprecise timestamps are discussed as the timestamp, as the position, is one of the two mandatory event attributes to determine the order of the events in a trace, i.e. to establish the total order. "In most cases" this comes down to timestamps rather than positions. (\textit{missing, imprecise or incorrect attributes}). Timestamps can give detailed insight through process mining techniques (\textit{waiting and service time, bottleneck detection and anlysis, flow time and SLA analysis, analysis of frequencies and utilization}). Challenges with timestamps are, although not necessarily needed in order to order a trace, for example that when it comes to combining events from different sources timestamps are needed to sort events. Problem: multiple clocks and delayed recording. \\
+	\cite{suriadi2017event}\\
+	\cite{mans2012process}\\
+	Literature that describes data quality issues in general is: \cite{AalstWilvander2016Pm:d}, \cite{van2011process}, \cite{bose2013wanna}, \cite{suriadi2017event}, \cite{mans2015data} (only read here) and timestamp specific data in \cite{gschwandtner2012taxonomy}...\\
+	Examples of timestamp quality issues relate to their granularity, order anomaly or statistical anomaly as described in \cite{dixit2018detection} are imprecise timestamps \cite{AalstWilvander2016Pm:d}\cite{mans2015data}[...], event logs made from events of different systems with distinct time recording strategy \cite{van2011process}\cite{gschwandtner2012taxonomy} or timestamp formatting ("unanchored timestamp problem") \cite{gschwandtner2012taxonomy}\cite{suriadi2017event}, events being recorded after the process was finished, i.e. post mortem \cite{AalstWilvander2016Pm:d}, or manual entering events or timestamps \cite{mans2015data}\cite{lu2014conformance} or problems occurring due to multiple, different timezones \cite{gschwandtner2012taxonomy}.
+	The inaccuracies have a effect on a broad range of process mining techniques \cite{dixit2018detection} this means for conformance checking that...\\
+	
+	
+	\subsection{State of the Art (SM1)}\label{sec:introduction::state-of-art}
+	
+	\subsection{Research Question (SM2)}\label{sec:introduction::research-question}
+	Do Deep Learning techniques, LSTM, exceed precision in resolving partially ordered traces compared to the baseline (??) and the procedure recently proposed by van der Aa et. al. in \cite{self}?
+	
+	\subsection{Method or Approach (SM3, SM4)}\label{sec:introduction::method}
+	We will use state-of-the-art Deep Learning techniques to resolve the partial orderings, namely LSTMs. Therefore we incorporate two/three special encodings to generate input and output sequences that hold the "new" view on events/traces/logs. 
+	
+	\subsection{Findings (SM5, SM6)}\label{sec:introduction::results}
+
+%%% ===============================================================================
+\section{Background}
+%%% ===============================================================================
+	\subsection{Preliminaries}
+		Process Mining is a field in the area of data science, next to other famous domains such as statistics, datamining or machine learning. \cite[p.3ff]{AalstWilvander2016Pm:d} It's goal is to evaluate event data against some formal model, e.g. Petri Nets or BPMN models, describing the execution of processes. Event data is gathered manually or automatically likewise are process models. They can either be created according to given ideas and regularities describing the possible executions of an instance of the process. On the other hand there exist algorithmic techniques to discover process models from event data. With the given data and models it is then possible to evaluate certain properties of this data-model-complex, the three main types being discovery, enhancement and conformance. 
+		In the field of process mining, a subfield of (see process mining book) we deliberately investigate the happenings of processes of the "real world". 
+		It is about modeling, checking and improving such processes. Furthermore we can apply the area of conformance, checking on the area of process mining, which is basically a more in depth investigation how well a model of a process and the actual execution of such processes are conforming. This chapter is therefore used to gently introduce typical concepts that are used in process mining and more precisely defining the attributes we need in order to answer the research question. Additionally our (main) method to solve the problem of finding resolutions for partially ordered traces will be using neural networks, i.e. a special method from the wide field of machine learning. Thus we will give a short overview over typical machine learning ideas and more concisely introduce artificial neural networks, all of their properties and capabilities as well as the different network architectures we will be have used. \\
+		Most of the plain mathematical concepts should be of knowledge to the reader, and therefore instead of defined mostly explained in text. There might be some exceptions relating to the fields of either conformance checking or neural network such as conformance checking measures or algorithms, gradient descent functions for error minimizing in ANN's or the way of encoding input data in an ANN.\\
+		Informally an \textit{Event Log} is a data structure holding all sequentially executed \textit{activities} as \textit{events} of a given \textit{process model}. Thus for any \textit{Event Log} \(\mathcal{L}\) the universe of \textit{events}, \textit{activities} or \textit{cases} are denoted as \(\mathcal{E}\), \(\mathcal{A}\) and \(\mathcal{C}\) respectively. \\
+		For a running example we will refer to the b12-Log, which we also examined for solving the proposed research questions. This log is accessible at ??.
+		
+		\begin{defn}{\textbf{(Event)}}
+			Let \( \mathcal{E}\) be the universe of events. An event \(e \in \mathcal{E}\) describes that a most single unit of a process has been executed. Events hold certain attributes, from the universe of attributes \(\mathcal{N}\). So we define a function \(\#_n(e)\) for an \(n \in \mathcal{N}\), which describes the value of attribute n for event e. 
+		\end{defn}
+
+		\begin{defn}{\textbf{(Activity)}}
+			Let \(\mathcal{A}\) be the universe of activities. An event \(e \in \mathcal{E}\) is mapped to a distinct activity, i.e. \(\#_{Acitivity}(e) \in \mathcal{A}\), which describes the unique activity that was executed for that event.
+		\end{defn}
+
+		\begin{defn}{\textbf{(Case)}}
+			Let \(\mathcal{C}\) be the universe of cases, then \(\#_{Case}(e) \in \mathcal{C}\) is used for relating events to the same execution instance of a process.  
+		\end{defn}
+
+		The definition of cases is needed for defining \textit{traces} later on.\\
+		In our case, i.e. in the logs we investigated, events hold various attributes, but only the attributes \textit{ID}, \textit{Acitivity} and \textit{Time} are relevant. For instance \(\#_{Time}(e)\) for an \(e \in \mathcal{E}\) returns the exact time at which the happening of that was record. Note that this obviously must not be the time at which the event had happened really. \\
+		
+		The classical definition of traces in process mining is that a trace \(T\) is a set of events \(e_1, e_2, ..., e_n\) all related to the same case, i.e. for all \(e, e' \in T, \#{Case}(e) = \#_{Case}(e') \).
+		A \textit{trace E} can also be represented as a sequence of activities \(\sigma = \langle a_1,a_2,...,a_{|E|} \rangle \in \mathcal{A}^*\), where \(a_i = \#_{Activity}(e_i)\) of the sequence \(\langle e_1,e_2,...,e_{|E|} \rangle \in E^*\), which is obtained by ordering each event by its timestamps, i.e. for all \(1 \leq i \leq j \leq |E|\) it holds that \(\#_{Time}(e_i) < \#_{Time}(e_j)\). \\
+		Since we consider events with equal timestamps and thus such ordering would be ambiguous we will define traces as sets of events. Each event set contains events with the same timestamp and thus we can order the log clearly. \\
+
+		\begin{defn}{\textbf{(Trace)}}
+			A sequence of disjoint set of events \(E_1, E_2, ... , E_n \subseteq \mathcal{E}\) is a trace \(\sigma = \langle E_1, ..., E_n \rangle\), if for all \(e, e' \in E_\sigma \), \(\#{Case}(e) = \#_{Case}(e')\), where \(E_\sigma = \bigcup_{1 \leq i \leq n} E_i\) is the set of all events of \(\sigma\) and \(\forall E_i \in \sigma \forall e, e' \in E_i \#_{Time}(e) = \#_{Time}(e')\) and \(\forall E_j, E_k \in \sigma \forall e_{jl} \in E_j and e_{km} \in E_k \#_{Time}(e_{jl}) < \#_{Time}(e_{km}), 1 \leq j \leq k \leq n, l \in |E_j|, m \in |E_k|\)
+		\end{defn}
+		
+		Similarly the definition of an Event Log is slightly deviant than from the usual ones, as for example used in \cite{AalstWilvander2016Pm:d} or \cite{carmona2018conformance}, where Logs are built from the powerset of the event universe \(\mathcal{E}\) 
+		
+		\begin{defn}{\textbf{(Event Log)}}
+			An Event Log is a tuple \((\Sigma, \lambda)\), where \(\Sigma\) denotes a set of traces and \(\lambda : \bigcup_{\sigma \in \Sigma} E_\sigma \rightarrow \mathcal{A}\) assigns activities to all events.  
+		\end{defn}
+		
+		Based on the timestamps associated with events in a given log, we define a partial ordering of events for a certain trace. Thus an event e1 < e2, if the timestamp of e1, i.e. time(e1), is smaller than/happens before, the timestamp of e2, i.e time(e2). Otherwise the timestamps of e1 and e2 are the same, leading to e1 = e2, i.e. time(e1) = time(e2).\\
+		So for any Event Set \(E = \{e_1, ..., e_n\} \in \wp(\mathcal{E}) \)there exist n! possible resolutions of that Event Set, i.e. orderings in which way those events could have been executed in real life. This is formally captured in the following definition. 
+		
+		\begin{defn}{\textbf{(Possible Resolution)}}
+			For an Event Set \(E \in \mathcal{E}\) we define the possible resolutions of E as all ordered sequences of the elements in E with \(\Phi(E) = \{\langle e_1, ..., e_{|E|}\rangle | \forall 1 \leq i,j \leq |E|: e_i, e_j \in E \land e_i = e_j \implies i=j \} \)
+		\end{defn}	
+	
+		For speaking of traces and logs according to their traits in respect to their certainty we define the notion of certain and uncertain traces or logs respectively, which resemble the appearance of uncertain event sets in either of the two.
+		
+		\begin{defn}{\textbf{(Certain, Uncertain Trace)}}
+			A trace \(\sigma = \langle E_1, ..., E_n \rangle\) is called certain if \(\forall E_i \in \sigma: |E_i| = 1, i \in \{1, ..., n\}\). Otherwise $\sigma$ is called uncertain
+		\end{defn}
+	
+		\begin{defn}{\textbf{(Certain, Uncertain Event Log)}}
+			Similarly an Event Log \(L\) is called uncertain if there exists an uncertain trace \(\sigma \in L\), otherwise \(L\) is called certain.
+		\end{defn}
+
+
+		\begin{defn}{\textbf{(Artifical Neural Network)}}
+			Artifial Neural Network (ANN)
+		\end{defn}
+		\begin{defn}{\textbf{(feedforward-ANN)}}
+			feedforward-ANN
+		\end{defn}
+		\begin{defn}{\textbf{(Recurrent Neural Network)}}
+			Recurrent Neural Network (RNN)
+		\end{defn}
+	
+		In the field of deep learning it is typically needed to encode your data for feeding it into your deep learning models such that the underlying algorithms can process and calculate the given input data. 
+		In our case the data is in a text context as events are mostly described in names.
+		
+		\begin{defn}{\textbf{(Encoding}}
+			An encoding is a mapping of given data to some numerical value. 
+		\end{defn}
+		
+		We will use classic encoding strategies for our first encoding approach (One-Hot- and Embed-Encoding) and use a second approach use an advanced version of the classic one-hot-encoding. 
+		
+		Partial Order, Total Order \\ 
+	
+	\subsection{Related Work}
+	The field of conformance checking and process mining is very broad, so a lot of research has been done there up to today. Furthermore the field of machine learning has reached another peak of high interest in business applications, as well as media, teaching and research. \\
+	The particular problem of solving partially ordered event logs from real-life process applications though, has been investigated in a fairly small amount compared to the above. 
+	Different techniques have been used to solve the problem differently and machine learning was only used once for predicting information of event logs. \\
+	To my best knowledge and also stated in previous work \cite{lu2014conformance} so far there has been little research done addressing the problem of only partially ordered event logs.\\
+	M. de Leoni et al. presented a technique to abstract the problem of aligning partially ordered traces into a PDDL-encoded planning problem. This approach will either report, that there exists no solution, i.e. optimal alignment, for an explicit trace and petri net. Or it will, in finite time, find an optimal alignment for a trace and petri net, whether or not the trace is sequential, i.e. totally ordered or a trace containing concurrent events, i.e. partially ordered. (note that by definition every totally ordered trace it also a partially ordered trace).\cite{de2018aligning} \\
+	Van der Aalst et al. took another approach in defining partially ordered traces and from those compute partially ordered alignments, with the aim to provide a model that can express concurrently running events and from there getting insight in the meaning of those. \cite{lu2014conformanceShort} They researched the usefulness of those partially-ordered alignments with case studies relying on real-world data from a Dutch hospital. \cite{lu2014conformance} \\
+	In \cite{dixit2018detection} Dixit et. al. show a semi-automated method to repair timestamp imperfection in event logs as they... \\
+	In \cite{tax2017predictive} Niek Tax et. al. introduce an approach to tackle three question not yet visited in the field of process mining. They use RNN's, LSTM's specifically, to answer three questions 1),2),3). However they let the order certainity of traces unvisited and thus, while exploring an answer for the next activity, omit the information of certain parts of a trace already being order / they only give answer on how future traces could end most possibly. \\
+	Weidlich et. al. have sought three algorithmic approaches for resolving partially ordered traces in giving a probability distribution over all possible resolutions and from there on efficiently compute the conformance of partially ordered traces with a given process model.\cite{self} \\
+	As of my best knowledge no research has yet been done, to resolve partial ordering of traces in conformance checking / process mining. We expect to find valuable solutions for resolving the partial ordering of events happening at the same time, exploiting the field of deep learning, neural networks respectively. \\
+	\\
+	In \cite{bose2013wanna} Bose et al. address the problem of imprecise event data in real-life logs, going into detail about three timestamp related problems among nine other categories, such as heterogeneous cases or the increasing amount of general data volume for logs.  Real-life event logs are fine-granular, heterogeneous, voluminous, incomplete and noisy. They describe common data quality issues for event logs and state that coarse or mixed granular timestamps render process mining algorithms to deliver "wrong" control-flows, i.e. sequential activities are modeled in parallel, or even completely impossible, e.g. performance analysis. It may be good practice to look in uncertain logs for typical outliers in the appearing uncertain traces as proposed in this paper to further increase the validity of the calculated probabilities for the possible resolutions. They also show the BPI-Challenge 2012 would not yield any timestamp related issues !? Mismatch between event triggered and recorded, because it is first queued in an internal buffer or not synchronized locked. Manual logging of multiple events at the same time makes it appear the events happened in the same millisecond whereas in reality the did not. They found timestamp issues in 80\% in other words 4 of the 5 examined real-life logs.\\
+	Another mention of partially ordered logs appears in \cite{beschastnikh2011mining} Beschastnikh et.al. propose three algorithms to extract temporal invariants from partially ordered logs to capture concurrency and apply process mining techniques to concurrently running systems. \\ 
+	\cite{accorsi2012exploitation} encourages the resolution of partially ordered traces to totally ordered ones, as this case study shows, how process mining and conformance checking techniques can be used to verify security requirements for (business) processes and thus reveal violations of time constraints for instance. \\
+	A. Adriansyah et. al. show in \cite{adriansyah2011conformance} that a total order is necessary in order to perform state of the art conformance checking on event logs. Conformance Checking important for process management, process improvement and compliance. Skipping or inserting events are typical deviations. Conformance comprises of fitness, precision, generalization, structural. \\
+	In \cite{van2012replaying} van der Aalst et. al. investigate the quality metrics for alignments. Fitness: Can the Model generate the observed behavior? Precision: Avoid Underfitting. Generalization: Avoid Overfitting. Simplicity: Ocamms Razor. The three types of process mining are Discovery, Enhancement, and Conformance Checking. Process Mining sits between Computational Intelligence and data mining on the one hand and on the other between process modeling and analysis. Starting point for all process mining techniques are event logs, which are built by recording events sequentially (assumption). Then each unique event is related to  a certain activity (i.e. a defined step of the process) and a particular case / trace (i.e. an execution instance of the process). For future work not only resolving the order but also resolving an acutal timestampt for the events from the rest of the log might be of interest to answer questions like: the observed average waiting time, compute flow time, service time or synchronization times for models and log. A process model annotated with timestamps can be uses to diagnose performance problems. Furthermore learned time depending behavior can be used to make predictions: "Remaining time for this case?" or recommendations: "Which actions minimize the overall cost?". Process Models are Petri Nets, UML activity diagrams, BPMN, EPCs, YAWL etc.
+	Basis are transition systems and all models should be interchangeable, i.e. their languages are the same.
+	Models with timestamps for performance analysis and replaying event logs with timestamps allows for bottleneck analysis and prediction as demonstrated in [see this paper]. \\
+	The lack of synchronization leading to faulty timestamps is described in \cite{mutschler2013reliable} and states that events timestamps do not always go hand in hand with the time of their recording. A novel approach is presented to outperform existing buffering techniques, but still out-of order timestamps remain. Also in \cite{koskinen2008borderpatrol} the problem of following and comparing timestamps in distributed systems is addressed, as not synchronized clocks do make timestamps partially incomparable.  \\
+	That manual recording of execution time for events can lead to inaccurate traces has been shown in \cite{lu2014conformance}. \\
+	The problem of sensing the data with real-time locating systems and generating event logs from there is addressed in \cite{tran2009probabilistic} and \cite{senderovich2016road}. The construction of discrete events from raw signals is uncertain and generated using probabilistic / data learning approaches \cite{tran2009probabilistic}. Whereas \cite{senderovich2016road} shows that going from raw sensor data to event logs needs a fair amount of process knowledge and the derived logs still have quality issues. .\\ 
+	\\
+	Machine Learning is a wide field of methods, also emerging from data sciences, trying to learn some behavior. There is wide range of tasks to learn such as regression, clustering,  dimensionality reduction and classification. Among an equally wide spectrum of methods to incorporate these tasks artificial neural networks (ANN) are popular among amateurs and scientists as they provide an intuitive model of the underlying (biological) concept as well as delivering state of the art results in many scientific research programs, e.g. classification of handwritten digits or pictures of clothing. \\
+	Generally there are two types of neural networks, feedforward and recurrent ANNs. The latter inherit a hidden state that evolves over time and thus can handle sequential data especially well. The initial recurrent neural networks however have turned out to suffer from the \textit{vanishing gradient} problem. This means that over time newer inputs of a given input sequence will have a larger effect on the hidden state than older inputs, for instance the very first one. Over a sufficient large sequence of inputs the respective gradients of very early inputs would basically become 0. The \textit{long short-term memory} ANN (LSTM) are model originally introduced in ???? which control information flow of memory more accurately / flexible by using a more sophisticated hidden unit. 
+
+	
+%%% ===============================================================================
+\section{Problem Exposition (optional)}
+%%% ===============================================================================
+	
+	
+	\subsection{Context / Business Understanding (SM1)}
+	As stated in the the Introduction \ref{sec:introduction} when logs are acquired in real life not all data will 
+	always be completely clean. For instance roles performing a certain activity might be missing or trace, i.e. instances
+	of a process, might not have been recorded. Furthermore there is are multiple reasons for timestamps in the log to be vague. This can be due to the lack of synchronization, manual recording or data sensing. \cite{self}
+	For conformance checking techniques to be used on the even data to be executed properly and thus give meaningful insights into the correlation of model (Petri Net, ... ) and data (Event Logs) there are different approaches one could undertake. For instance one could just drop out the uncertain traces before applying state of the art conformance checking techniques, which especially makes sense when there is only a small fraction of traces that are uncertain for the event log. \\ However we would rather try to resolve this uncertainty to get the most realistic image of what has happened when the activities in the logs had been executed. 
+	
+	\subsection{Data Understanding (SM1)}
+	To understand the data we are working with better we examined x Event Logs available from the open research website from the 4TU website. (link is now down unfortunately). Event Logs that are generated in real world processes vary largely in a lot of different aspects. For example for the x logs we examined a priori, to choose the right ones for evaluating the research question upon, the number of traces range widely from about 1000 to over 150000 per Event Log and furthermore the size of the Activity Universe \(\mathcal{A}\) can be quite small with 9 activities or relatively large with up to 51 activities executable. See Table \ref{table:statistics} for a concise summary. \\ 
+	The uncertainty of the logs, i.e. the fraction of traces, which are uncertain, go from 6\% up to almost the whole log being uncertain with 96\%. The number of uncertain sets we observed appearing in the given logs go from 15 up to 39.
+	The basic statistical key figures however are fairly evenly distributed over all the logs. For simplicity we denote the set of uncertain sequences of a log as $unc\_seq$, i.e. it contains all the sets of activities for which had the same timestamp in at least one trace of the log. Here so far we only consider the longest sequence, e.g. for a trace $\langle A,B,C,D,E \rangle$ in which B, C, D are uncertain we would only add $\{B, C, D\}$ to $unc\_seq$ and not $\{B, C\}$ and $\{C, D\}$ although one could argue they appear as uncertain in the log as well. However it is hard to provide evidence that the shorter sequences would appear uncertain "alone" as well and for example B and C would also be uncertain if D had a different timestamp than the two for that trace.  So the average length of the uncertain sequences is between 2 and 3 and the median of the maximum length of the uncertain Sequences in each log is 4. \\  
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{| c | c | c | c |}
+			\hline
+			Log:                     & BPI 21 & BPI 14 & Traffic Fines \\
+			\hline \hline
+			$| \mathcal{A} |$        & 24     & 9      & 11 \\
+			\# Traces                & 13087  & 41353  & 150370 \\
+			\# Events                & 262200 & 369485 & 561470 \\
+			Trace Uncertainty        & 38\%   & 93\%   & 6\% \\  
+			Event Uncertainty        & 5\%    & 40\%   & 2\% \\
+			$|unc\_seq|$             & 14     & 24     & 25 \\
+			longest $unc\_seq$       & 4      & 4      & 3 \\
+			avg length of $unc\_seq$ & 2.4    & 2.6    & 2.0 \\
+			\hline
+		\end{tabular}
+		\caption{Summary of empirically obtained data for the different logs}
+		\label{table:statistics}
+	\end{table}
+	
+	Example of a table
+	
+	
+	\subsection{Detailed Research Questions (SM2)}
+	The research question in detail tries to answer whether a dynamic deep learning neural network architecture can yield more precise and consistent results for partial order resolution in event logs than the statical algorithms approached in \cite{self}. \\
+	Therefore we need to ensure that we can define a model that suits our needs the best and the training data we will use for evaluating the deep learning model. The final goal of the research will be to acquire a model that we can feed any uncertain event set, for certain event set the problem is trivial, and it will present us the most probable resolution for that uncertain event set. 
+	
+	\subsection{Detailed Method (SM3)}
+	The method is to take real world event logs form open research repositories (link is down..) and process them as follows. \\
+	We extract all important data from the logs, mainly the traces and events. Additionally for each event we keep the needed attributes, which are the attendant Case-ID, Event-ID, timestamps and therefore their ordering. 
+	Also for comparism with the prior approach shown in \cite{self} we implemented the three given algorithms in python and evaluated the results against what we could find with the deep learning approach of this thesis. 
+
+%%% ===============================================================================
+\section{First Real Chapter addressing first Research Problem}
+%%% ===============================================================================
+
+	\subsection{Encoding the Event Data}
+	Finding good encodings for events, is difficult, since all possible resolutions for an uncertain set leads to too many possible resolutions, i.e. the input or output vectors would get too large, when using \textit{one-hot-encoding}. With \textit{embeddings} the length of each input would be shorter or the chosen embedding dimension more precisely. But still the set of all possible resolution would be needed to calculate the embeddings for any occuring event set(maybe change name in definition) of the input log. \\
+	To address this problem only the occuring resoltions for any event set have been taken into account. The reduction of vector size for the five logs examined is represented in TABLE. \\
+	For any uncertain event set \(e = {e_1, e_2, e_3, ..., e_n}\)of length n, the size of the input vector results of following formula: FORMULA. The first part is the size of the activity universe, since all possible singular event sets must be considered. \\
+	For a given k, and an activity set $\mathcal{A}$ the number of possible event sets to appear and thus the length of input vector size can be computed as $\sum_{l=1}^k (|\mathcal{A}| + l -1)! / (l! \cdot (|\mathcal{A}| - 1)!)$.  \\
+	On the other hand the output vector size, i.e. all possible sequences from length 1 to k can be simply computed as $\sum_{l=1}^k |\mathcal{A}|^l$, and naturally is an upper bound to the input vector size. \\
+	This clearly increases exponentially by increasing the size of the activity universe or the length of the traces.  \\ 
+	Encoding all possibilities vs encoding only the occurring possibilities \\
+	If we were to encode all possible up-to-k subsets for a given event set the number of encodings, i.e. the number of possibly appearing events is computed as follows. Thereby the number k is set to four at the moment, as the inspection of our three data sets / logs have shown the longest uncertain sequence is actually four.\\
+	\(\#encodings(k=4)= \sum_{j=1}^{k}|\mathcal{E}|^j\) \\
+	For the three observed logs with a size of the event universe of 24 (BPI12), 9 (BPI14) and 11 (Traffic) respectively this would lead to a total number of 346200 (BPI12), 7380 (BPI14) and 16104 (Traffic) of possible events to encode. \\
+	However not all of these combinations of events do appear in the log. Actually we could observe that only 14 (BPI12), 24 (BPI14) and 25 (Traffic) of all possible event sets where present in the corresponding logs. (not counting the trivial event sets?) \\
+	Summing up the possible resolutions for each of these event sets as of: let m be the length of an uncertain set, then there are m! possible resolutions for that set. E.g. for the uncertain set \{a,b,c,\} of length 3 there exist 3! = 6 possible resolutions, \{a,b,c\}, \{a,c,b\}, \{b,a,c\}, \{b,c,a\}, \{c,a,b\}, \{c,b,a\}. Counting up from there we have 86 (BPI12), 134 (BPI14) and 63 (Traffic) encodings for the output vectors.
+	Leveraging this idea would on the one hand ease encoding in making the feature vectors a lot smaller. In the best case scenario for the BPI12 log this would mean a reduction of feature vector length by roughly the factor of 25000. \\ 
+	Real-life Event Logs however can have a much bigger activity spaces, e.g. the log of the BPI-Challenge 2015 which contains almost 400 possible activities to be executed. \\
+	Furthermore one could reduce the size of the input vectors only(!), since ordering for any event set here does not matter / does not exist. So for instance the uncertain event set \{a,b,c\} and \{c,a,b\} resemble the same input structure and therefore could be treated as the same input, namely \{a,b,c\} in this case. \\
+	Additionally we only considered a k of 4. One however can easily see that for larger k this also explodes exponentially. \\
+	That is why embeddings where used for encoding, as literature suggests using this type of encoding over one-hot-encoding for vectors that would contain more than 50 different features.
+	
+	Finally we consider two relevant encodings.
+	
+	\subsection{What is the training data}
+	 
+	
+	\subsection{Trying out a feedforward-ANN}
+	When considering the research problem, curiosity made the way for also trying out the learning behaviour of a feedforward-ANN. 
+	The hypothesis was that the feedforward-ANN would learn the current fraction of already correct ordered uncertain traces, when assuming the order in the log was the correct order for any given trace. By that way for a uncertain event say \(\{a, b, c\}\) the net would possibly learn which ordering, \(\{a, b, c\}\),  \(\{a, c, b\}\),\(\{b, a, c\}\), \(\{b, c, a\}\), \(\{c a, b\}\), \(\{c, b, a\}\) appears most frequently in the given log, and assign the each of the possible resolutions their following appearance probability. \\
+	´
+
+%%% ===============================================================================
+\section{Acquiring Data}
+%%% ===============================================================================
+	The data was acquired from these links referring to standard event logs for research, annual challenges etc. in the field of process mining.
+	
+	\subsection{Abstracting timestamps}
+	For resolving the partially ordered traces in the proposed manner it was sufficient to abstract from timestamps such that only the order remained but no exact timestamps, e.g. for events \textit{$e_1$}, \textit{$e_2$} with timestamps \textit{$t_1$}, \text{$t_2$} we would keep the information that \textit{$e_2$} occurred before \textit{$e_1$} and omit the information about how much time exactly lies between those events.
+	
+	\subsection{Fraction of uncertain traces}
+	
+	\subsection{Training and Test Data}
+	
+	\subsection{Finding out the solutions and making predicitons}
+
+%%% ===============================================================================
+\section{Evaluation}
+%%% ===============================================================================
+
+	\subsection{Objective (SM2)}
+	Regarding the initial hypothesis that deep learning, artificial neural networks especially can resolve partial orders should be assessed here. Therefore we compare the neural network approach with the previous attempt \cite{self} (and the ground truth). Following from that the precision of the provided resolution by each attempt are compared. Firstly we took all the uncertain traces from the experimental data (Sepsis, Permit, BPI 12, BPI 14, Traffic Fine Log) and extract from them all the uncertain sequences. We then let every model predict the possible resolution for each of those. Note that the output layer of the artificial neural network is pretty large as is the probability space for the stochastic attempt. So as a first attempt we implement a 0/1-loss over all answers provided by the two models. This means we abstract from the models producing a probability distribution over the classes and rather transform the class prediction vector such that it contains a 1 where it had the highest probability value and 0 everywhere else. Than the total precision of the model is computed as the sum of the number of correct predictions normalized by the number of all predictions.\\
+	
+	\subsection{Setup (SM3)}
+	Since, as described before, Event Logs can in practical use can take very different shapes, e.g. in terms of average trace length, size of the activity set, the average size of uncertain sequences and probably most importantly the level of uncertainty found in the log, it is important to compare both models individually on each event. Then from there on one could make deduct further insights. 
+	
+	\subsection{Execution (SM4)}
+	For LSTM with encoding 1 (set and sequences) epoches used: 100 for bpi14 log, 30 used for traffic fines log, the process for the bpi12 log was killed (probably due to high ram usage). \\
+	For accuracy we used the \textit{catergorial\_accuracy}, specified when compiling a model in keras, which creates \textit{count} and \textit{total} as two local variables and thereby computes the ratio of correct to total predictions. \\
+	Also we defined our own accuracy metrics, as \textit{categorical\_accuracy} did not seem to yield results matching the prediction accuracy of the trained models. We therefore manually introduced metrics that would make predictions for the hold out test set and compare the results to the actual / ground truth (what should be predicted) contained in the test set targets.
+	
+	\subsection{Results (SM5)}
+	For the Sepsis Log [see table 1] the results are as expected. Since the log is rather small and only contains a small amount of certain traces the deep learning approach could only 
+	
+	For the BPI-12 Log training with k=4 lead converging at around 0.68 accuracy as fast as shortly before 10 epochs, k=3 also converged fast, after the third epoch with a training accuracy of about 0.82.
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}{| c | c | c | c | c | c |}
+			\hline
+			Log:  & BPI 12     & BPI 14     & Traffic Fines \\
+			\hline \hline
+			k = 2 & x.xx, x.xx & x.xx, x.xx & x.xx, x.xx    \\
+			k = 3 & x.xx, x.xx & x.xx, x.xx & x.xx, x.xx    \\
+			k = 4 & x.xx, x.xx & x.xx, x.xx & x.xx, x.xx    \\  
+			
+			\hline
+		\end{tabular}
+		\caption{training accuracy for different values of k with ANN approach \\
+		         in each cell it is training accuracy, test accuracy}
+		\label{table:resultsANN}
+	\end{table}	 
+	
+	\subsection{Discussion (SM6)}
+
+%%% ===============================================================================
+\section{Conclusion}
+%%% ===============================================================================
+		Your conclusions are not just a factual summary of your work, but they position, interpret and defend your findings against the state of the art that you discussed in Sect.~\ref{sec:introduction::state-of-art}. You specifically outline which concrete findings or methodological contributions advance our knowledge towards the general objective you introduced in Sect.~\ref{sec:introduction::topic}. Objectively discuss which parts you solved and in which parts you failed. \\
+		You should explicitly discuss limitations and shortcomings of your work and detail what kind of future studies are needed to overcome these limitations. Be specific in the sense that your arguments for future work should be based on concrete findings and insights you obtained in your report.\\
+		\\
+		Maybe state that different models, regarding to parameters, complexity, algorithmic details, need to be considered, for example pruning or application of Occam's Razors could have positive effects on computation time or error-rate. \cite{domingos1998occam} Furthermore recently the decision making of machine learning models has been questioned as for instance in image classification horse images have been classified also by an text tag in the bottom left rather than the picture itself. \cite{lapuschkin2019unmasking} Thus further investigation of the learning scheme of models which resolve partial orders for event logs should be considered.\\
+		\\
+		Some different encoding of the activity space could yield different results, as for example using word embeddings, such as \textit{Word2Vec} or \textit{GloVe}, in order to create a meaningful geometric space of related activities. Embeddings have been introduced to process mining successfully in \cite{de2018act2vec} with vector representations learned for activities (\text{act2vec}) and traces(\text{trace2vec}) among others, similar to \textit{Word2Vec}, and further already have been applied to a new conformance checking approach with promising initial results in \cite{peeperkorn2020conformance}. \\
+		Other more sophisticated approaches, that emerged in the recent years, could improve the prediction accuracy as well. Namely \textit{Bidirectional RNNs}, \textit{Beam Search}, \textit{Attention Mechanisms}, here especially the transformer architectures. \cite{geron2019hands}\\
+		\\
+		For the examined logs the average length of uncertain sequences never exceeds the value of 3, as table \ref{table:statistics} shows, which encourages the assumption to invent strategies that omit the possibly few longer uncertain sequences in order to gain advantages in terms of execution time and space complexity.
+	
+	
+
+\section{brainstorming}	
+\begin{table*}[h]
+	\caption{Used models and specifications }
+	\label{tab:commands}
+	\begin{tabu}{c c c c c c c c c}
+		\toprule
+		model   &     log & encoding  &      ordering   & Done ?          & \multicolumn{4}{c}{Results}  \\
+		\cline{6-9}
+		        &         &           &                 &                 & train     &  val       &  test     & accuracy\\
+		\midrule
+		LSTM    & BPIC12  & basic     & log order       & \checkmark      & 2.28e-08  &  1.41e-08  &  1.30e-07 & 1.00    \\
+		LSTM    & BPIC14  & basic     & log order       & \checkmark      & 6.36e-09  &  6.45e-09  &  6.34e-09 & 1.00    \\
+		LSTM    & traffic & basic     & log order       & \checkmark      & 2.24e-08  &  2.24e-08  &  2.24e-08 & 1.00    \\
+		\midrule
+		LSTM    & BPIC12  & ...       & ...             & ...             & x.xx      &  x.xx      &  x.xx     &         \\
+		LSTM    & BPIC14  & sets      & ...             & ...             & 0.024     &  0.020     &  0.024    &         \\
+		LSTM    & traffic & sets      & ...             & ...             & x.xx      &  x.xx      &  x.xx     &         \\
+		\midrule
+		seq2seq & BPIC12  & basic     & log order       & \checkmark      & 0.032     &  0.064     &  -        & 0.45    \\
+		seq2seq & BPIC14  & basic     & log order       & \checkmark      & 0.062     &  0.50      &  -        & 0.66    \\
+		seq2seq & traffic & basic     & log order       & \checkmark      & 8.66e-04  &  0.002     &  -        & 1.00 (0.998)        \\
+		\midrule
+		seq2seq & BPIC12  & ...       & ...             & ...             & x.xx      &  x.xx      &  -        &         \\
+		seq2seq & BPIC14  & sets      & log order       & ...             & 0.073     &  0.255     &  -        &         \\
+		seq2seq & traffic & sets      & log order       & ...             & 0.098     &  0.108     &  -        &         \\
+		\bottomrule 
+	\end{tabu}
+\end{table*}
+The LSTM, basic was done with 0.2 test size, 0.1 validation size and 100 epochs, one hidden lstm layer \\
+The Seq2seq basic was done with 0.2 test size and 50 epochs, "standard" encoder-decoder architecture of 2 LSTMs in total \\
+\\
+The LSTM, basic was done with 0.2 test size, 0.1 validation size and 30 epochs, one hidden lstm layer \\
+Options for large vocabulary: \\
+\begin{itemize}
+	\item mark rare tokens / event sets with "RARE"
+	\item https://stackoverflow.com/questions/51057123/keras-one-hot-encoding-memory-management-best-possible-way-out
+	\item https://stackoverflow.com/questions/41002722/how-to-handle-very-sparse-vectors-in-tensorflow
+\end{itemize}
+
+%%% ===============================================================================
+%%% Bibliography
+%%% ===============================================================================		
+\newpage % or \cleardoublepage?
+\bibliographystyle{plain} %alpha
+\bibliography{bibliography}
+
+
+
+% Erzeugen der Selbständigkeitserklärung auf einem neuen Blatt:
+\selbstaendigkeitserklaerung{\today}
+
+\end{document}
